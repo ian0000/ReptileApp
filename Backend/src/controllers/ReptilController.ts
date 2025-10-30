@@ -50,14 +50,7 @@ export class ReptilController {
   static updateReptil = async (req: Request, res: Response) => {
     try {
       var { id } = req.params;
-      const reptil = await Reptil.findById(id);
-      if (!reptil) {
-        const error = new Error("Reptil no encontrado");
-        res.status(404).json({
-          error: error.message,
-        });
-        return;
-      }
+
       const { name } = req.body;
       const reptileExist = await Reptil.findOne({ name });
       if (reptileExist && reptileExist.id != id) {
@@ -67,10 +60,10 @@ export class ReptilController {
       }
 
       // Actualizar solo los campos enviados
-      Object.assign(reptil, req.body);
-      await reptil.save();
+      Object.assign(req.reptil, req.body);
+      await req.reptil.save();
 
-      res.json({ message: "Reptil actualizado correctamente", reptil: reptil });
+      res.json({ message: "Reptil actualizado correctamente", reptil: req.reptil });
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }
