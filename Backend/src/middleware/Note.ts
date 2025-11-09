@@ -15,7 +15,7 @@ export async function noteExist(req: Request, res: Response, next: NextFunction)
     const note = await Nota.findById(noteID);
     if (!note) {
       const error = new Error("Nota no encontrada");
-      res.status(404).json({ error: error });
+      res.status(404).json({ error: error.message });
       return;
     }
     req.nota = note;

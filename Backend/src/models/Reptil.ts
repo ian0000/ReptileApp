@@ -7,6 +7,8 @@ export interface IReptil extends Document {
   description: string;
   genre: number;
   notas: Types.ObjectId[];
+  logPesaje: Types.ObjectId[];
+  logComida: Types.ObjectId[];
 }
 const ReptilSchema: Schema = new Schema<IReptil>(
   {
@@ -31,6 +33,18 @@ const ReptilSchema: Schema = new Schema<IReptil>(
       {
         type: Types.ObjectId,
         ref: "Nota",
+      },
+    ],
+    logPesaje: [
+      {
+        type: Types.ObjectId,
+        ref: "LogPesaje",
+      },
+    ],
+    logComida: [
+      {
+        type: Types.ObjectId,
+        ref: "LogComida",
       },
     ],
   },

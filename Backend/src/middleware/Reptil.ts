@@ -15,7 +15,7 @@ export async function reptileExist(req: Request, res: Response, next: NextFuncti
 
     if (!reptile) {
       const error = new Error("Reptil no encontrado");
-      res.status(404).json({ error: error });
+      res.status(404).json({ error: error.message });
       return;
     }
     req.reptil = reptile;

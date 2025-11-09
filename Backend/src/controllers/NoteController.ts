@@ -42,7 +42,20 @@ export class NoteController {
       });
 
       await Promise.all([req.nota.deleteOne(), req.reptil.save()]);
-      res.send("Eliminada correctamente");
+      res.status(201).json({ message: "Nota eliminada correctamente" });
+      return;
+    } catch (error) {
+      res.status(500).json({ error: "Hubo un error" });
+    }
+  };
+
+  static updateNote = async (req: Request, res: Response) => {
+    try {
+      const note = req.nota;
+      Object.assign(req.nota, req.body);
+      await req.nota.save();
+      res.status(201).json({ message: "Nota Actualizada", note: req.nota });
+      return;
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }
