@@ -19,7 +19,7 @@ app.use(morgan("dev"));
 
 app.use(express.json());
 
-app.use("/api", reptileRouter);
+app.use("/api/reptiles", reptileRouter);
 //Routes
 
 export default app;
