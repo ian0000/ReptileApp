@@ -4,9 +4,9 @@ import { z } from "zod";
 const UnidadesSchema = z.enum(["g", "kg", "ml", "unidad"]);
 export type unidades = z.infer<typeof UnidadesSchema>;
 
-const generoSchema = z.union([z.literal(1), z.literal(2), z.literal(3)]);
+export const generoFormSchema = z.enum(["macho", "hembra", "indefinido"]);
 
-export type genero = z.infer<typeof generoSchema>;
+export type genero = z.infer<typeof generoFormSchema>;
 
 const contextoPesajeSchema = z.enum([
   "Control rutinario",
@@ -85,14 +85,20 @@ export const reptilSchema = z.object({
   name: z.string(),
   birthDate: z.coerce.date().optional(),
   description: z.string().optional(),
-  genre: generoSchema,
+  genre: generoFormSchema.transform((val) => {
+    if (val === "macho") return 1;
+    if (val === "hembra") return 2;
+    return 3;
+  }),
   //   obtener ultimos de estos datos
   notas: z.array(notaSchema).optional(),
   logPesaje: z.array(logPesajeSchema).optional(),
   logComida: z.array(logComidaSchema).optional(),
 });
 
-export const dashboardReptilSchema = z.array(reptilSchema.pick({ _id: true, name: true }));
+export const dashboardReptilSchema = z.array(
+  reptilSchema.pick({ _id: true, name: true, birthDate: true })
+);
 
 export type Reptil = z.infer<typeof reptilSchema>;
 export type ReptilFormData = Pick<Reptil, "name" | "birthDate" | "description" | "genre">;

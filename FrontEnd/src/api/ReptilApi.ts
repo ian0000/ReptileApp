@@ -4,10 +4,11 @@ import { dashboardReptilSchema, type ReptilFormData } from "../types";
 
 export async function createReptil(formData: ReptilFormData) {
   try {
-    const { data } = await api.post("/reptiles", formData);
+    const { data } = await api.post("/reptiles/create-reptil", formData);
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
+      console.log(error.response.data);
       throw new Error(error.response?.data.error || "Error creating reptile");
     }
   }
