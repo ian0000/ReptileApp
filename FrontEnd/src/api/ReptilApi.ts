@@ -1,6 +1,6 @@
 import { isAxiosError } from "axios";
 import api from "../lib/axios";
-import { dashboardReptilSchema, type ReptilFormData } from "../types";
+import { dashboardReptilSchema, reptilSchema, type Reptil, type ReptilFormData } from "../types";
 
 export async function createReptil(formData: ReptilFormData) {
   try {
@@ -25,6 +25,22 @@ export async function getReptiles() {
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response?.data.error || "Error fetching reptiles");
+    }
+  }
+}
+
+export async function getReptilById(reptilId: Reptil["_id"]) {
+  try {
+    const { data } = await api(`/reptiles/${reptilId}`);
+    console.log(data);
+    const response = reptilSchema.safeParse(data);
+    console.log(response);
+    if (response.success) {
+      return response.data;
+    }
+  } catch (error) {
+    if (isAxiosError(error) && error.response) {
+      throw new Error(error.response?.data.error || "Error fetching reptile");
     }
   }
 }

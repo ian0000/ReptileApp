@@ -31,6 +31,9 @@ export default function DashboardView() {
               <li key={reptile._id} className="p-4 border rounded">
                 <h2 className="text-xl font-semibold">{reptile.name}</h2>
                 <p>Fecha Nacimiento: {reptile.birthDate?.toLocaleDateString()} </p>
+                <Link to={`/reptiles/${reptile._id}`} className="text-blue-500 hover:text-blue-700">
+                  Ver Detalles
+                </Link>
               </li>
             ))}
           </ul>

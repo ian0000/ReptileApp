@@ -5,7 +5,14 @@ const UnidadesSchema = z.enum(["g", "kg", "ml", "unidad"]);
 export type unidades = z.infer<typeof UnidadesSchema>;
 
 export const generoFormSchema = z.enum(["macho", "hembra", "indefinido"]);
-
+export const generoSchema = z
+  .union([z.enum(["macho", "hembra", "indefinido"]), z.literal(1), z.literal(2), z.literal(3)])
+  .transform((val) => {
+    console.log("Transform genero:", val);
+    if (val === 1 || val === "macho") return "macho";
+    if (val === 2 || val === "hembra") return "hembra";
+    return "indefinido";
+  });
 export type genero = z.infer<typeof generoFormSchema>;
 
 const contextoPesajeSchema = z.enum([
@@ -85,15 +92,12 @@ export const reptilSchema = z.object({
   name: z.string(),
   birthDate: z.coerce.date().optional(),
   description: z.string().optional(),
-  genre: generoFormSchema.transform((val) => {
-    if (val === "macho") return 1;
-    if (val === "hembra") return 2;
-    return 3;
-  }),
-  //   obtener ultimos de estos datos
-  notas: z.array(notaSchema).optional(),
-  logPesaje: z.array(logPesajeSchema).optional(),
-  logComida: z.array(logComidaSchema).optional(),
+
+  genre: generoSchema,
+  // //   obtener ultimos de estos datos
+  notas: z.array(z.any()).default([]),
+  // logPesaje: z.array(logPesajeSchema).optional().nullable(),
+  // logComida: z.array(logComidaSchema).optional().nullable(),
 });
 
 export const dashboardReptilSchema = z.array(
