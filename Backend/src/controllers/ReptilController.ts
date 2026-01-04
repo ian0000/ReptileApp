@@ -49,11 +49,11 @@ export class ReptilController {
 
   static updateReptil = async (req: Request, res: Response) => {
     try {
-      var { id } = req.params;
+      var { reptileID } = req.params;
 
       const { name } = req.body;
       const reptileExist = await Reptil.findOne({ name });
-      if (reptileExist && reptileExist.id != id) {
+      if (reptileExist && reptileExist.id != reptileID) {
         const error = new Error("Ya esta usando ese nombre de reptil");
         res.status(409).json({ error: error.message });
         return;
@@ -64,6 +64,15 @@ export class ReptilController {
       await req.reptil.save();
 
       res.json({ message: "Reptil actualizado correctamente", reptil: req.reptil });
+    } catch (error) {
+      res.status(500).json({ error: "Hubo un error" });
+    }
+  };
+
+  static deleteReptil = async (req: Request, res: Response) => {
+    try {
+      await req.reptil.deleteOne();
+      res.json({ message: "Reptil eliminado correctamente" });
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
     }

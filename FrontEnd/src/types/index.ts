@@ -4,16 +4,11 @@ import { z } from "zod";
 const UnidadesSchema = z.enum(["g", "kg", "ml", "unidad"]);
 export type unidades = z.infer<typeof UnidadesSchema>;
 
-export const generoFormSchema = z.enum(["macho", "hembra", "indefinido"]);
-export const generoSchema = z
-  .union([z.enum(["macho", "hembra", "indefinido"]), z.literal(1), z.literal(2), z.literal(3)])
-  .transform((val) => {
-    console.log("Transform genero:", val);
-    if (val === 1 || val === "macho") return "macho";
-    if (val === 2 || val === "hembra") return "hembra";
-    return "indefinido";
-  });
-export type genero = z.infer<typeof generoFormSchema>;
+export const genreSchema = z.number().transform((value) => {
+  if (value === 1) return "macho";
+  if (value === 2) return "hembra";
+  return "indefinido";
+});
 
 const contextoPesajeSchema = z.enum([
   "Control rutinario",
@@ -93,7 +88,7 @@ export const reptilSchema = z.object({
   birthDate: z.coerce.date().optional(),
   description: z.string().optional(),
 
-  genre: generoSchema,
+  genre: genreSchema,
   // //   obtener ultimos de estos datos
   notas: z.array(z.any()).default([]),
   // logPesaje: z.array(logPesajeSchema).optional().nullable(),

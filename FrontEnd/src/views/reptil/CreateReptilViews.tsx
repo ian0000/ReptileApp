@@ -13,17 +13,15 @@ export default function CreateReptilViews() {
     name: "",
     birthDate: new Date(),
     description: "",
-    genre: 1,
+    genre: "macho",
   };
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: createReptil,
     onError: (error: Error) => {
-      // Handle error
       toast.error(error.message);
     },
     onSuccess: (data) => {
-      // Handle success
       toast.success(data);
       navigate("/");
     },
@@ -42,28 +40,55 @@ export default function CreateReptilViews() {
   };
 
   return (
-    <>
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-2xl font-bold mb-4">Crear Nuevo Reptil</h1>
-
-        <nav className="my-5">
-          <Link to="/" className="text-blue-500 hover:text-blue-700 font-bold">
-            Volver a la lista de reptiles
-          </Link>
-        </nav>
-
-        <form
-          onSubmit={handleSubmit(handleForm)}
-          className="space-y-4 bg-white p-4 rounded shadow"
-          noValidate
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-sky-50 flex items-center justify-center px-4">
+      <div className="w-full max-w-2xl">
+        {/* Back */}
+        <Link
+          to="/"
+          className="inline-flex items-center gap-2 text-sm font-semibold
+                     text-blue-600 hover:text-blue-800 mb-6"
         >
-          <ReptilForm register={register} errors={errors} />
-          <input
-            type="submit"
-            className="w-full bg-blue-500 hover:bg-blue-700 text-white p-3 uppercase font-bold cursor-pointer transition-colors"
-          />
-        </form>
+          ← Volver
+        </Link>
+
+        {/* Card */}
+        <div
+          className="relative bg-white rounded-3xl shadow-xl
+                     p-10 overflow-hidden"
+        >
+          {/* Decorative glow */}
+          <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-400/20 rounded-full blur-3xl" />
+          <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-sky-400/20 rounded-full blur-3xl" />
+
+          {/* Header */}
+          <div className="relative mb-8">
+            <h1 className="text-4xl font-extrabold text-gray-900">Nuevo Reptil 🦎</h1>
+            <p className="text-gray-500 mt-2 text-lg">
+              Registra un nuevo integrante en tu colección
+            </p>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={handleSubmit(handleForm)} noValidate className="relative space-y-6">
+            <ReptilForm register={register} errors={errors} />
+
+            {/* CTA */}
+            <button
+              type="submit"
+              disabled={isPending}
+              className="w-full py-4 rounded-xl
+                         bg-gradient-to-r from-emerald-500 to-sky-500
+                         hover:from-emerald-600 hover:to-sky-600
+                         disabled:opacity-60 disabled:cursor-not-allowed
+                         text-white font-extrabold text-lg
+                         tracking-wide shadow-lg
+                         transition-all transform hover:-translate-y-0.5"
+            >
+              {isPending ? "Guardando..." : "Crear Reptil"}
+            </button>
+          </form>
+        </div>
       </div>
-    </>
+    </div>
   );
 }

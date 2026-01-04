@@ -58,6 +58,13 @@ router.patch(
   handleInputErrors,
   ReptilController.updateReptil
 );
+
+router.delete(
+  "/delete-reptil/:reptileID",
+  param("reptileID").isMongoId().withMessage("Id no valido"),
+  handleInputErrors,
+  ReptilController.deleteReptil
+);
 //#endregion
 //#region Notas
 router.param("noteID", noteExist);

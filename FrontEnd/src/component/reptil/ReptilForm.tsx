@@ -1,10 +1,12 @@
-import { Link } from "react-router-dom";
+import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import ErrorMessage from "../ErrorMessage";
+import type { ReptilFormData } from "../../types";
 
 type ReptilFormProps = {
-  register: any;
-  errors: any;
+  register: UseFormRegister<ReptilFormData>;
+  errors: FieldErrors<ReptilFormData>;
 };
+
 export default function ReptilForm({ register, errors }: ReptilFormProps) {
   return (
     <>
@@ -23,16 +25,16 @@ export default function ReptilForm({ register, errors }: ReptilFormProps) {
       </div>
       <div className="mb-5 space-y-3">
         <label htmlFor="reptileBirthDate" className="text-sm font-bold uppercase">
-          Fecha de Nacimiento:
+          Fecha de Nacimiento
         </label>
         <input
           type="date"
           id="reptileBirthDate"
-          className="w-full p-3 border border-gray-200"
-          placeholder="Fecha de nacimiento del reptil"
+          className="w-full p-3 border border-gray-200 rounded-lg"
           {...register("birthDate")}
         />
       </div>
+
       <div className="mb-5 space-y-3">
         <label htmlFor="reptileDescription" className="text-sm font-bold uppercase">
           Descripción:
@@ -51,13 +53,14 @@ export default function ReptilForm({ register, errors }: ReptilFormProps) {
         </label>
 
         <select
-          {...register("genre", { required: "El género es obligatorio" })}
           id="reptileGenre"
-          className="w-full p-3 border border-gray-200"
+          className="w-full p-3 border border-gray-200 rounded-lg"
+          {...register("genre", { required: "El género es obligatorio" })}
         >
-          <option value="1">Macho</option>
-          <option value="2">Hembra</option>
-          <option value="3">Indefinido</option>
+          <option value="">Selecciona un género</option>
+          <option value="macho">Macho</option>
+          <option value="hembra">Hembra</option>
+          <option value="indefinido">Indefinido</option>
         </select>
 
         {errors.genre && <ErrorMessage> {errors.genre.message}</ErrorMessage>}
