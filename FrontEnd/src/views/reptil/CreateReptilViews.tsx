@@ -38,7 +38,7 @@ export default function CreateReptilViews() {
   const handleForm = (formData: ReptilFormData) => {
     const payload = {
       ...formData,
-      genre: Number(formData.genre),
+      genre: formData.genre,
     };
     mutate(payload);
   };

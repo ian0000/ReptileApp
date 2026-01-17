@@ -56,7 +56,7 @@ export const EditReptileForm = ({ data, reptilId }: EditReptileFormProps) => {
   const handleForm = (formData: ReptilFormData) => {
     const payload: ReptilFormData = {
       ...formData,
-      genre: Number(formData.genre),
+      genre: formData.genre,
     };
     mutate({ reptilId, formData: payload });
   };

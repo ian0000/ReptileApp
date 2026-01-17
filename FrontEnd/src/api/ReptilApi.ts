@@ -3,6 +3,7 @@ import api from "../lib/axios";
 import { reptilFormSchema, type ReptilFormData } from "../types";
 import type { components } from "./types";
 import { schemas } from "./client";
+import type { ReptilId } from "./ids";
 
 type Reptil = components["schemas"]["Reptil"];
 
@@ -35,7 +36,7 @@ export async function getReptiles(): Promise<Pick<Reptil, "_id" | "name" | "birt
   }
 }
 
-export async function getReptilById(reptilId: Reptil["_id"]): Promise<Reptil> {
+export async function getReptilById(reptilId: ReptilId): Promise<Reptil> {
   try {
     const { data } = await api.get(`/reptiles/${reptilId}`);
     return schemas.Reptil.parse(data);
@@ -49,11 +50,12 @@ export async function getReptilById(reptilId: Reptil["_id"]): Promise<Reptil> {
 
 type UpdateReptilArgs = {
   formData: ReptilFormData;
-  reptilId: Reptil["_id"];
+  reptilId: ReptilId;
 };
 
 export async function updateReptileData({ formData, reptilId }: UpdateReptilArgs) {
   try {
+    console.log("Updating reptile with ID:", reptilId, "and data:", formData);
     const payload = reptilFormSchema.parse(formData);
 
     const { data } = await api.patch(`/reptiles/update-reptil/${reptilId}`, payload);
@@ -67,7 +69,7 @@ export async function updateReptileData({ formData, reptilId }: UpdateReptilArgs
   }
 }
 
-export async function deleteReptilById(reptilId: Reptil["_id"]) {
+export async function deleteReptilById(reptilId: ReptilId) {
   try {
     const { data } = await api.delete(`/reptiles/delete-reptil/${reptilId}`);
     return data;
