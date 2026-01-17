@@ -11,9 +11,9 @@ export default function CreateReptilViews() {
 
   const initialValues: ReptilFormData = {
     name: "",
-    birthDate: new Date(),
+    birthDate: new Date().toString(),
     description: "",
-    genre: "macho",
+    genre: 1,
   };
 
   const { mutate, isPending } = useMutation({
@@ -36,7 +36,11 @@ export default function CreateReptilViews() {
   });
 
   const handleForm = (formData: ReptilFormData) => {
-    mutate(formData);
+    const payload = {
+      ...formData,
+      genre: Number(formData.genre),
+    };
+    mutate(payload);
   };
 
   return (

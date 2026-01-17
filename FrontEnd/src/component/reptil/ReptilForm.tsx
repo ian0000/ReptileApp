@@ -58,9 +58,9 @@ export default function ReptilForm({ register, errors }: ReptilFormProps) {
           {...register("genre", { required: "El género es obligatorio" })}
         >
           <option value="">Selecciona un género</option>
-          <option value="macho">Macho</option>
-          <option value="hembra">Hembra</option>
-          <option value="indefinido">Indefinido</option>
+          <option value="1">Macho</option>
+          <option value="2">Hembra</option>
+          <option value="3">Indefinido</option>
         </select>
 
         {errors.genre && <ErrorMessage> {errors.genre.message}</ErrorMessage>}

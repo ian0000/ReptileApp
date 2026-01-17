@@ -10,18 +10,9 @@ type EditReptileFormProps = {
   data: ReptilFormData;
   reptilId: string;
 };
-const formatDateForInput = (date?: string | Date) => {
-  if (!date) return "";
 
-  // 🔥 SIEMPRE tratar como string
-  if (typeof date === "string") {
-    return date.split("T")[0];
-  }
-
-  // ⚠️ Date → string SIN UTC
-  return date.toISOString().split("T")[0];
-};
 import { useEffect } from "react";
+import { formatDateForInput } from "../../utils/utils";
 
 export const EditReptileForm = ({ data, reptilId }: EditReptileFormProps) => {
   const navigate = useNavigate();
@@ -63,7 +54,11 @@ export const EditReptileForm = ({ data, reptilId }: EditReptileFormProps) => {
   });
 
   const handleForm = (formData: ReptilFormData) => {
-    mutate({ reptilId, formData });
+    const payload: ReptilFormData = {
+      ...formData,
+      genre: Number(formData.genre),
+    };
+    mutate({ reptilId, formData: payload });
   };
 
   return (

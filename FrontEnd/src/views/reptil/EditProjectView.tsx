@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { getReptilById } from "../../api/ReptilApi";
 import { EditReptileForm } from "../../component/reptil/EditReptilForm";
+import { reptilApiToForm } from "../../utils/reptilAdapters";
 
 export default function EditProjectView() {
   const params = useParams();
@@ -26,5 +27,5 @@ export default function EditProjectView() {
     navigate("/404", { replace: true });
     return null;
   }
-  if (data) return <EditReptileForm data={data} reptilId={reptilId} />;
+  if (data) return <EditReptileForm data={reptilApiToForm(data)} reptilId={reptilId} />;
 }

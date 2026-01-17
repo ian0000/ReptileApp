@@ -1,9 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link, Navigate } from "react-router-dom";
 import { getReptiles } from "../api/ReptilApi";
-export const formatDateSafe = (date: Date) => {
-  return date.toISOString().slice(0, 10);
-};
+import { formatDate } from "../utils/utils";
 
 export default function DashboardView() {
   const { data, isLoading, isError } = useQuery({
@@ -65,7 +63,7 @@ export default function DashboardView() {
                   <p className="text-sm text-gray-500 mt-3">Fecha de nacimiento</p>
 
                   <p className="text-gray-700 font-semibold">
-                    {reptile.birthDate ? formatDateSafe(reptile.birthDate) : "No registrada"}
+                    {reptile.birthDate ? formatDate(reptile.birthDate) : "No registrada"}
                   </p>
 
                   <Link

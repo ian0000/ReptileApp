@@ -1,8 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams, Link } from "react-router-dom";
 import { deleteReptilById, getReptilById } from "../../api/ReptilApi";
-import { formatDateSafe } from "../DashboardView";
 import { toast } from "react-toastify";
+import { formatDate, formatGenre } from "../../utils/utils";
 
 export default function ReptilDetailsView() {
   const navigate = useNavigate();
@@ -93,13 +93,15 @@ export default function ReptilDetailsView() {
               <div className="space-y-5">
                 <div className="flex justify-between">
                   <span className="text-gray-500 font-medium">Género</span>
-                  <span className="font-bold text-gray-800 capitalize">{data.genre}</span>
+                  <span className="font-bold text-gray-800 capitalize">
+                    {formatGenre(data.genre)}
+                  </span>
                 </div>
 
                 <div className="flex justify-between">
                   <span className="text-gray-500 font-medium">Fecha de nacimiento</span>
                   <span className="font-bold text-gray-800">
-                    {data.birthDate ? formatDateSafe(data.birthDate) : "No registrada"}
+                    {data.birthDate ? formatDate(data.birthDate) : "No registrada"}
                   </span>
                 </div>
               </div>
@@ -124,7 +126,7 @@ export default function ReptilDetailsView() {
                 onClick={() => {
                   if (
                     !window.confirm(
-                      "¿Estás seguro de eliminar este reptil? Esta acción no se puede deshacer."
+                      "¿Estás seguro de eliminar este reptil? Esta acción no se puede deshacer.",
                     )
                   ) {
                     return;

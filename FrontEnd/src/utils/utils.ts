@@ -7,3 +7,27 @@ export function formatDate(isoString: string): string {
   });
   return formatter.format(date);
 }
+// Convierte genre numérico a texto
+export function formatGenre(genre?: number): string {
+  switch (genre) {
+    case 1:
+      return "Macho";
+    case 2:
+      return "Hembra";
+    case 3:
+      return "Indefinido";
+    default:
+      return "No especificado";
+  }
+}
+export function formatDateForInput(date?: string | Date): string {
+  if (!date) return "";
+
+  // 🔥 SIEMPRE tratar como string
+  if (typeof date === "string") {
+    return date.split("T")[0];
+  }
+
+  // ⚠️ Date → string SIN UTC
+  return date.toISOString().split("T")[0];
+}

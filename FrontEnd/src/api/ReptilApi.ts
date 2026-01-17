@@ -1,82 +1,69 @@
 import { isAxiosError } from "axios";
 import api from "../lib/axios";
-import { dashboardReptilSchema, reptilSchema, type Reptil, type ReptilFormData } from "../types";
+import { reptilFormSchema, type ReptilFormData } from "../types";
+import type { components } from "./types";
+import { schemas } from "./client";
 
-const genreToNumber = (genre: ReptilFormData["genre"]) => {
-  if (genre === "macho") return 1;
-  if (genre === "hembra") return 2;
-  return 3;
-};
-
-export function formatDateForInput(date?: Date | string): string {
-  if (!date) return "";
-
-  const d = typeof date === "string" ? new Date(date) : date;
-
-  const year = d.getFullYear();
-  const month = String(d.getMonth() + 1).padStart(2, "0");
-  const day = String(d.getDate()).padStart(2, "0");
-
-  return `${year}-${month}-${day}`;
-}
+type Reptil = components["schemas"]["Reptil"];
 
 export async function createReptil(formData: ReptilFormData) {
   try {
-    formData.genre = genreToNumber(formData.genre) as any;
-    const { data } = await api.post("/reptiles/create-reptil", formData);
+    // Validación UX (opcional pero recomendable)
+    const payload = reptilFormSchema.parse(formData);
+
+    const { data } = await api.post("/reptiles/create-reptil", payload);
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
-      console.log(error.response.data);
-      throw new Error(error.response?.data.error || "Error creating reptile");
+      throw new Error(error.response.data.error || "Error creating reptile");
     }
+    throw error;
   }
 }
 
-export async function getReptiles() {
+export async function getReptiles(): Promise<Pick<Reptil, "_id" | "name" | "birthDate">[]> {
   try {
     const { data } = await api.get("/reptiles");
-    const response = dashboardReptilSchema.safeParse(data);
-    if (response.success) {
-      return response.data;
-    }
+
+    // Validación API (opcional)
+    return schemas.Reptil.pick({ _id: true, name: true, birthDate: true }).array().parse(data);
   } catch (error) {
     if (isAxiosError(error) && error.response) {
-      throw new Error(error.response?.data.error || "Error fetching reptiles");
+      throw new Error(error.response.data.error || "Error fetching reptiles");
     }
+    throw error;
   }
 }
 
-export async function getReptilById(reptilId: Reptil["_id"]) {
+export async function getReptilById(reptilId: Reptil["_id"]): Promise<Reptil> {
   try {
-    const { data } = await api(`/reptiles/${reptilId}`);
-    const response = reptilSchema.safeParse(data);
-    if (response.success) {
-      return response.data;
-    }
+    const { data } = await api.get(`/reptiles/${reptilId}`);
+    return schemas.Reptil.parse(data);
   } catch (error) {
     if (isAxiosError(error) && error.response) {
-      throw new Error(error.response?.data.error || "Error fetching reptile");
+      throw new Error(error.response.data.error || "Error fetching reptile");
     }
+    throw error;
   }
 }
 
-type ReptilAPIType = {
+type UpdateReptilArgs = {
   formData: ReptilFormData;
   reptilId: Reptil["_id"];
 };
 
-export async function updateReptileData({ formData, reptilId }: ReptilAPIType) {
+export async function updateReptileData({ formData, reptilId }: UpdateReptilArgs) {
   try {
-    formData.genre = genreToNumber(formData.genre) as any;
-    console.log(formData);
-    const { data } = await api.patch(`/reptiles/update-reptil/${reptilId}`, formData);
-    console.log(data);
+    const payload = reptilFormSchema.parse(formData);
+
+    const { data } = await api.patch(`/reptiles/update-reptil/${reptilId}`, payload);
+
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
-      throw new Error(error.response?.data.error || "Error updating reptile");
+      throw new Error(error.response.data.error || "Error updating reptile");
     }
+    throw error;
   }
 }
 

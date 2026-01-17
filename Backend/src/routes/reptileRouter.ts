@@ -19,8 +19,132 @@ import { LogPesajeController } from "../controllers/LogPesajeController";
 import { LogComidaController } from "../controllers/LogComidaController";
 
 const router = Router();
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Genre:
+ *       type: number
+ *       enum: [1, 2, 3]
+ *       description: |
+ *         1 = Macho
+ *         2 = Hembra
+ *         3 = Desconocido
+ *
+ *     TipoNota:
+ *       type: string
+ *       enum: [comida, suplemento, comportamiento, otro]
+ *
+ *     TagsNota:
+ *       type: string
+ *       enum:
+ *         - calcio
+ *         - multivitaminico
+ *         - muda
+ *         - comportamiento normal
+ *         - fruta
+ *
+ *     Unidad:
+ *       type: string
+ *       enum: [g, kg, ml, unidad]
+ *
+ *     TipoAlimento:
+ *       type: string
+ *       enum:
+ *         - grillo
+ *         - gusano de harina
+ *         - gusano de coco
+ *         - gusano rey
+ *         - cucaracha dubia
+ *         - cucaracha roja
+ *         - ratón pinky
+ *         - ratón adulto
+ *         - otro
+ *
+ *     MetodoAlimentacion:
+ *       type: string
+ *       enum: [manual, pinzas, libre, forzada, otro]
+ *
+ *     ContextoPesaje:
+ *       type: string
+ *       enum:
+ *         - Control rutinario
+ *         - Post muda
+ *         - Pre cría
+ *         - Post cría
+ *         - Revisión por enfermedad
+ *         - Cambio de dieta
+ *         - Nuevo ejemplar
+ *         - Otro
+ */
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Reptil:
+ *       type: object
+ *       required:
+ *         - name
+ *         - genre
+ *       properties:
+ *         _id:
+ *           type: string
+ *           example: 65a1bc23ff12a9c33b0e9999
+ *         name:
+ *           type: string
+ *           example: Iguana Verde
+ *         birthDate:
+ *           type: string
+ *           format: date
+ *           example: 2022-03-15
+ *         description:
+ *           type: string
+ *           example: Reptil arbóreo
+ *         genre:
+ *           $ref: '#/components/schemas/Genre'
+ *         notas:
+ *           type: array
+ *           items:
+ *             type: string
+ *         logPesaje:
+ *           type: array
+ *           items:
+ *             type: string
+ *         logComida:
+ *           type: array
+ *           items:
+ *             type: string
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ */
 
 // #region Reptil
+/**
+ * @swagger
+ * /api/reptiles/create-reptil:
+ *   post:
+ *     summary: Crear un reptil
+ *     tags: [Reptiles]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Reptil'
+ *     responses:
+ *       200:
+ *         description: Reptil creado correctamente
+ *       409:
+ *         description: Ya existe un reptil con ese nombre
+ *       400:
+ *         description: Error de validación
+ */
+
 router.post(
   "/create-reptil",
   body("name").notEmpty().withMessage("El nombre del reptil es obligatorio."),
@@ -31,19 +155,76 @@ router.post(
   body("description").optional(),
   body("genre").optional(),
   handleInputErrors,
-  ReptilController.createReptil
+  ReptilController.createReptil,
 );
 
+/**
+ * @swagger
+ * /api/reptiles:
+ *   get:
+ *     summary: Obtener todos los reptiles
+ *     tags: [Reptiles]
+ *     responses:
+ *       200:
+ *         description: Lista de reptiles
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Reptil'
+ */
 router.get("/", ReptilController.getAllReptiles);
 
+/**
+ * @swagger
+ * /api/reptiles/{id}:
+ *   get:
+ *     summary: Obtener un reptil por ID
+ *     tags: [Reptiles]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Reptil encontrado
+ *       404:
+ *         description: Reptil no encontrado
+ */
 router.get(
   "/:id",
   param("id").isMongoId().withMessage("Id no valido"),
   handleInputErrors,
-  ReptilController.getReptileById
+  ReptilController.getReptileById,
 );
 
 router.param("reptileID", reptileExist);
+/**
+ * @swagger
+ * /api/reptiles/update-reptil/{reptileID}:
+ *   patch:
+ *     summary: Actualizar un reptil
+ *     tags: [Reptiles]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Reptil'
+ *     responses:
+ *       200:
+ *         description: Reptil actualizado correctamente
+ *       409:
+ *         description: Nombre duplicado
+ */
 router.patch(
   "/update-reptil/:reptileID",
   param("reptileID").isMongoId().withMessage("Id no valido"),
@@ -56,22 +237,158 @@ router.patch(
   body("description").optional(),
   body("genre").optional(),
   handleInputErrors,
-  ReptilController.updateReptil
+  ReptilController.updateReptil,
 );
 
+/**
+ * @swagger
+ * /api/reptiles/delete-reptil/{reptileID}:
+ *   delete:
+ *     summary: Eliminar un reptil
+ *     tags: [Reptiles]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Reptil eliminado correctamente
+ */
 router.delete(
   "/delete-reptil/:reptileID",
   param("reptileID").isMongoId().withMessage("Id no valido"),
   handleInputErrors,
-  ReptilController.deleteReptil
+  ReptilController.deleteReptil,
 );
-//#endregion
+//#endregion Reptil
+
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Note:
+ *       type: object
+ *       required:
+ *         - name
+ *         - type
+ *         - reptil
+ *       properties:
+ *         _id:
+ *           type: string
+ *         name:
+ *           type: string
+ *           example: Revisión veterinaria
+ *         description:
+ *           type: string
+ *           example: Chequeo general
+ *         type:
+ *           $ref: '#/components/schemas/TipoNota'
+ *         tags:
+ *           $ref: '#/components/schemas/TagsNota'
+ *         weight:
+ *           type: number
+ *           example: 1.3
+ *         humidity:
+ *           type: number
+ *           example: 70
+ *         temp:
+ *           type: number
+ *           example: 28
+ *         reptil:
+ *           type: string
+ *           description: ID del reptil
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ */
+
 //#region Notas
 router.param("noteID", noteExist);
 router.param("noteID", noteBelongsToReptil);
-
+/**
+ * @swagger
+ * /api/reptiles/{reptileID}/notes:
+ *   get:
+ *     summary: Obtener todas las notas de un reptil
+ *     tags: [Notas]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lista de notas
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Note'
+ *       404:
+ *         description: Reptil no encontrado
+ */
 router.get("/:reptileID/notes", NoteController.getAllNotes);
+
+/**
+ * @swagger
+ * /api/reptiles/{reptileID}/notes/{noteID}:
+ *   get:
+ *     summary: Obtener una nota por ID
+ *     tags: [Notas]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: noteID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Nota encontrada
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Note'
+ *       404:
+ *         description: Nota no encontrada
+ */
 router.get("/:reptileID/notes/:noteID", NoteController.getNoteByID);
+
+/**
+ * @swagger
+ * /api/reptiles/{reptileID}/notes:
+ *   post:
+ *     summary: Crear una nota para un reptil
+ *     tags: [Notas]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Note'
+ *     responses:
+ *       200:
+ *         description: Nota creada correctamente
+ *       400:
+ *         description: Error de validación
+ */
 router.post(
   "/:reptileID/notes",
   param("reptileID").isMongoId().withMessage("Id no valido"),
@@ -102,14 +419,65 @@ router.post(
     .withMessage("La temperatura debe ser un número entre 0 y 60°C."),
 
   handleInputErrors,
-  NoteController.createNote
+  NoteController.createNote,
 );
+
+/**
+ * @swagger
+ * /api/reptiles/{reptileID}/notes/{noteID}:
+ *   delete:
+ *     summary: Eliminar una nota
+ *     tags: [Notas]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: noteID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Nota eliminada correctamente
+ */
 router.delete(
   "/:reptileID/notes/:noteID",
   param("noteID").isMongoId().withMessage("Id no valido"),
   handleInputErrors,
-  NoteController.deleteNote
+  NoteController.deleteNote,
 );
+
+/**
+ * @swagger
+ * /api/reptiles/{reptileID}/notes/{noteID}:
+ *   patch:
+ *     summary: Actualizar una nota
+ *     tags: [Notas]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: noteID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Note'
+ *     responses:
+ *       200:
+ *         description: Nota actualizada correctamente
+ *       404:
+ *         description: Nota no encontrada
+ */
 router.patch(
   "/:reptileID/notes/:noteID",
   param("noteID").isMongoId().withMessage("Id no valido"),
@@ -140,16 +508,130 @@ router.patch(
     .withMessage("La temperatura debe ser un número entre 0 y 60°C."),
 
   handleInputErrors,
-  NoteController.updateNote
+  NoteController.updateNote,
 );
 
-//#endregion
+//#endregion Notas
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     LogPesaje:
+ *       type: object
+ *       required:
+ *         - peso
+ *         - reptil
+ *       properties:
+ *         _id:
+ *           type: string
+ *         peso:
+ *           type: number
+ *           minimum: 0
+ *           example: 1.45
+ *         unidad:
+ *           $ref: '#/components/schemas/Unidad'
+ *         contexto:
+ *           $ref: '#/components/schemas/ContextoPesaje'
+ *         observaciones:
+ *           type: string
+ *           example: Peso tomado en ayuno
+ *         diferencia:
+ *           type: number
+ *           example: 0.05
+ *         reptil:
+ *           type: string
+ *           description: ID del reptil
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ */
+
 //#region Log Pesaje
 router.param("logPesajeID", logPesajeExist);
 router.param("logPesajeID", logPesajeBelongsToReptil);
+/**
+ * @swagger
+ * /api/reptiles/{reptileID}/logPesaje:
+ *   get:
+ *     summary: Obtener logs de pesaje de un reptil
+ *     tags: [LogPesaje]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lista de registros de pesaje
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/LogPesaje'
+ *       404:
+ *         description: Reptil no encontrado
+ */
 
 router.get("/:reptileID/logPesaje", LogPesajeController.getLogs);
+/**
+ * @swagger
+ * /api/reptiles/{reptileID}/logPesaje/{logPesajeID}:
+ *   get:
+ *     summary: Obtener un log de pesaje por ID
+ *     tags: [LogPesaje]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: logPesajeID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Registro de pesaje encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LogPesaje'
+ *       404:
+ *         description: Registro no encontrado
+ */
+
 router.get("/:reptileID/logPesaje/:logPesajeID", LogPesajeController.getLogById);
+/**
+ * @swagger
+ * /api/reptiles/{reptileID}/logPesaje:
+ *   post:
+ *     summary: Crear un registro de pesaje
+ *     tags: [LogPesaje]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LogPesaje'
+ *     responses:
+ *       200:
+ *         description: Registro de pesaje creado correctamente
+ *       400:
+ *         description: Error de validación
+ */
+
 router.post(
   "/:reptileID/logPesaje",
   param("reptileID").isMongoId().withMessage("Id no valido"),
@@ -173,14 +655,64 @@ router.post(
     .isIn(Object.values(ContextoPesaje))
     .withMessage(`El  contexto debe ser uno de: ${Object.values(ContextoPesaje).join(", ")}`),
   handleInputErrors,
-  LogPesajeController.createLog
+  LogPesajeController.createLog,
 );
+/**
+ * @swagger
+ * /api/reptiles/{reptileID}/logPesaje/{logPesajeID}:
+ *   delete:
+ *     summary: Eliminar un registro de pesaje
+ *     tags: [LogPesaje]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: logPesajeID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Registro eliminado correctamente
+ */
+
 router.delete(
   "/:reptileID/logPesaje/:logPesajeID",
   param("logPesajeID").isMongoId().withMessage("Id no valido"),
   handleInputErrors,
-  LogPesajeController.deleteLog
+  LogPesajeController.deleteLog,
 );
+/**
+ * @swagger
+ * /api/reptiles/{reptileID}/logPesaje/{logPesajeID}:
+ *   patch:
+ *     summary: Actualizar un registro de pesaje
+ *     tags: [LogPesaje]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: logPesajeID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LogPesaje'
+ *     responses:
+ *       200:
+ *         description: Registro actualizado correctamente
+ *       404:
+ *         description: Registro no encontrado
+ */
 
 router.patch(
   "/:reptileID/logPesaje/:logPesajeID",
@@ -209,15 +741,136 @@ router.patch(
     .withMessage(`El  contexto debe ser uno de: ${Object.values(ContextoPesaje).join(", ")}`),
 
   handleInputErrors,
-  LogPesajeController.updateLog
+  LogPesajeController.updateLog,
 );
-//#endregion
+//#endregion Log Pesaje
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     LogComidas:
+ *       type: object
+ *       required:
+ *         - cantidad
+ *         - tipoAlimento
+ *         - reptil
+ *       properties:
+ *         _id:
+ *           type: string
+ *         cantidad:
+ *           type: number
+ *           minimum: 0
+ *           example: 5
+ *         unidad:
+ *           $ref: '#/components/schemas/Unidad'
+ *         tipoAlimento:
+ *           $ref: '#/components/schemas/TipoAlimento'
+ *         suplemento:
+ *           type: string
+ *           example: Calcio
+ *         metodo:
+ *           $ref: '#/components/schemas/MetodoAlimentacion'
+ *         observaciones:
+ *           type: string
+ *           example: Buen apetito
+ *         excreto:
+ *           type: boolean
+ *           example: true
+ *         apetito:
+ *           type: number
+ *           minimum: 1
+ *           maximum: 5
+ *         reptil:
+ *           type: string
+ *           description: ID del reptil
+ *         createdAt:
+ *           type: string
+ *           format: date-time
+ *         updatedAt:
+ *           type: string
+ *           format: date-time
+ */
+
 //#region Log Comidas
 router.param("logComidaID", logComidaExist);
 router.param("logComidaID", logComidaBelongsToReptil);
+/**
+ * @swagger
+ * /api/reptiles/{reptileID}/logComidas:
+ *   get:
+ *     summary: Obtener logs de comida de un reptil
+ *     tags: [LogComidas]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Lista de registros de comida
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/LogComidas'
+ */
 
 router.get("/:reptileID/logComidas", LogComidaController.getLogs);
+/**
+ * @swagger
+ * /api/reptiles/{reptileID}/logComidas/{logComidaID}:
+ *   get:
+ *     summary: Obtener un log de comida por ID
+ *     tags: [LogComidas]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: logComidaID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Registro de comida encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/LogComidas'
+ *       404:
+ *         description: Registro no encontrado
+ */
+
 router.get("/:reptileID/logComidas/:logComidaID", LogComidaController.getLogById);
+/**
+ * @swagger
+ * /api/reptiles/{reptileID}/logComidas:
+ *   post:
+ *     summary: Crear un registro de comida
+ *     tags: [LogComidas]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LogComidas'
+ *     responses:
+ *       200:
+ *         description: Registro de comida creado correctamente
+ *       400:
+ *         description: Error de validación
+ */
 
 router.post(
   "/:reptileID/logComidas",
@@ -247,17 +900,68 @@ router.post(
     .withMessage("Se debe escoger un metodo de alimento.")
     .isIn(Object.values(metodoAlimentacion))
     .withMessage(
-      `El  metodo de alimento debe ser uno de: ${Object.values(metodoAlimentacion).join(", ")}`
+      `El  metodo de alimento debe ser uno de: ${Object.values(metodoAlimentacion).join(", ")}`,
     ),
   handleInputErrors,
-  LogComidaController.createLog
+  LogComidaController.createLog,
 );
+/**
+ * @swagger
+ * /api/reptiles/{reptileID}/logComidas/{logComidaID}:
+ *   delete:
+ *     summary: Eliminar un registro de comida
+ *     tags: [LogComidas]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: logComidaID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Registro eliminado correctamente
+ */
+
 router.delete(
   "/:reptileID/logComidas/:logComidaID",
   param("logComidaID").isMongoId().withMessage("Id no valido"),
   handleInputErrors,
-  LogComidaController.deleteLog
+  LogComidaController.deleteLog,
 );
+/**
+ * @swagger
+ * /api/reptiles/{reptileID}/logComidas/{logComidaID}:
+ *   patch:
+ *     summary: Actualizar un registro de comida
+ *     tags: [LogComidas]
+ *     parameters:
+ *       - in: path
+ *         name: reptileID
+ *         required: true
+ *         schema:
+ *           type: string
+ *       - in: path
+ *         name: logComidaID
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/LogComidas'
+ *     responses:
+ *       200:
+ *         description: Registro actualizado correctamente
+ *       404:
+ *         description: Registro no encontrado
+ */
+
 router.patch(
   "/:reptileID/logComidas/:logComidaID",
   param("reptileID").isMongoId().withMessage("Id no valido"),
@@ -293,10 +997,10 @@ router.patch(
     .withMessage("Se debe escoger un metodo de alimento.")
     .isIn(Object.values(metodoAlimentacion))
     .withMessage(
-      `El  metodo de alimento debe ser uno de: ${Object.values(metodoAlimentacion).join(", ")}`
+      `El  metodo de alimento debe ser uno de: ${Object.values(metodoAlimentacion).join(", ")}`,
     ),
   handleInputErrors,
-  LogComidaController.updateLog
+  LogComidaController.updateLog,
 );
-//#endregion
+//#endregion Log Comidas
 export default router;
