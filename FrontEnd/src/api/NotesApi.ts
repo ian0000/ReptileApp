@@ -13,7 +13,7 @@ export async function createNote(reptilId: ReptilId, formData: NoteFormData) {
 
     const { data } = await api.post(`/reptiles/${reptilId}/notes`, payload);
 
-    return schemas.Note.parse(data);
+    return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error || "Error creating note");
@@ -54,12 +54,12 @@ type UpdateNoteArgs = {
   formData: NoteFormData;
   noteId: NoteId;
 };
-export async function updateNoteData({ reptilId, formData, noteId }: UpdateNoteArgs) {
+export async function updateNoteData({ reptilId, noteId, formData }: UpdateNoteArgs) {
   try {
     const payload = noteFormSchema.parse(formData);
 
     const { data } = await api.patch(`/reptiles/${reptilId}/notes/${noteId}`, payload);
-    return schemas.Note.parse(data);
+    return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error || "Error updating note");
@@ -70,7 +70,7 @@ export async function updateNoteData({ reptilId, formData, noteId }: UpdateNoteA
 export async function deleteNoteById(reptilId: ReptilId, noteId: NoteId) {
   try {
     const { data } = await api.delete(`/reptiles/${reptilId}/notes/${noteId}`);
-    return schemas.Note.parse(data);
+    return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error || "Error deleting note");

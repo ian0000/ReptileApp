@@ -1,9 +1,6 @@
 import { Link, useNavigate } from "react-router-dom";
 import type { ReptilFormData } from "../../types";
 import { useForm } from "react-hook-form";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "react-toastify";
-import { updateReptileData } from "../../api/ReptilApi";
 import ReptilForm from "./ReptilForm";
 
 type EditReptileFormProps = {
@@ -13,10 +10,10 @@ type EditReptileFormProps = {
 
 import { useEffect } from "react";
 import { formatDateForInput } from "../../utils/utils";
+import { useUpdateReptil } from "../../hooks/useUpdateReptil";
 
 export const EditReptileForm = ({ data, reptilId }: EditReptileFormProps) => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
 
   const {
     register,
@@ -30,7 +27,6 @@ export const EditReptileForm = ({ data, reptilId }: EditReptileFormProps) => {
     },
   });
 
-  // 🔥 CLAVE: sincronizar cuando cambia la data
   useEffect(() => {
     reset({
       ...data,
@@ -38,27 +34,12 @@ export const EditReptileForm = ({ data, reptilId }: EditReptileFormProps) => {
     });
   }, [data, reset]);
 
-  const { mutate } = useMutation({
-    mutationFn: updateReptileData,
-    onSuccess: (message, variables) => {
-      queryClient.setQueryData(["reptil", reptilId], (oldData: any) => ({
-        ...oldData,
-        ...variables.formData,
-      }));
-
-      queryClient.invalidateQueries({ queryKey: ["reptiles"] });
-
-      toast.success(message);
-      navigate("/");
-    },
+  const { mutate: updateReptil } = useUpdateReptil(reptilId, () => {
+    navigate("/");
   });
 
   const handleForm = (formData: ReptilFormData) => {
-    const payload: ReptilFormData = {
-      ...formData,
-      genre: formData.genre,
-    };
-    mutate({ reptilId, formData: payload });
+    updateReptil(formData);
   };
 
   return (

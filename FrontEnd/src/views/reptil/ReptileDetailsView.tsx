@@ -1,33 +1,22 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate, useParams, Link } from "react-router-dom";
-import { deleteReptilById, getReptilById } from "../../api/ReptilApi";
-import { toast } from "react-toastify";
 import { formatDate, formatGenre } from "../../utils/utils";
+import { useReptil } from "../../hooks/useReptil";
+import { useDeleteReptil } from "../../hooks/useDeleteReptil";
+import { useEffect } from "react";
 
 export default function ReptilDetailsView() {
   const navigate = useNavigate();
   const { id: reptilId } = useParams();
 
-  const { data, isError, isLoading } = useQuery({
-    queryKey: ["reptile", reptilId],
-    queryFn: () => getReptilById(reptilId!),
-    retry: false,
-  });
+  const { data, isError, isLoading } = useReptil(reptilId!);
+  const { mutate: deleteReptil } = useDeleteReptil(() => navigate("/"));
 
-  const queryClient = useQueryClient();
+  useEffect(() => {
+    if (isError) {
+      navigate("/404", { replace: true });
+    }
+  }, [isError, navigate]);
 
-  const deleteMutation = useMutation({
-    mutationFn: deleteReptilById,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["reptiles"] });
-      queryClient.invalidateQueries({ queryKey: ["reptile"] });
-      toast.success("Reptil eliminado correctamente");
-      navigate("/");
-    },
-    onError: () => {
-      toast.error("Error al eliminar el reptil");
-    },
-  });
   if (isLoading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
@@ -36,8 +25,7 @@ export default function ReptilDetailsView() {
     );
   }
 
-  if (isError || !data) {
-    navigate("/404", { replace: true });
+  if (!data) {
     return null;
   }
 
@@ -132,7 +120,7 @@ export default function ReptilDetailsView() {
                     return;
                   }
 
-                  deleteMutation.mutate(data._id);
+                  deleteReptil(data._id);
                 }}
                 className="ml-4 inline-flex items-center gap-2
              bg-gradient-to-r from-red-500 to-red-600

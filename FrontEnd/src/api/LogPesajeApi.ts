@@ -58,8 +58,8 @@ type UpdateLogPesajeArgs = {
 };
 export async function updateLogPesajeData({
   reptilId,
-  formData,
   logPesajeId,
+  formData,
 }: UpdateLogPesajeArgs) {
   try {
     const payload = logPesajeFormSchema.parse(formData);

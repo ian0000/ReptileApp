@@ -1,11 +1,17 @@
-export function formatDate(isoString: string): string {
-  const date = new Date(isoString);
-  const formatter = new Intl.DateTimeFormat("es-ES", {
+export function formatDate(dateString: string): string {
+  console.log("Formatting date:", dateString);
+  if (!dateString) return "";
+
+  const [datePart] = dateString.split("T"); // YYYY-MM-DD
+  const [year, month, day] = datePart.split("-").map(Number);
+
+  const date = new Date(year, month - 1, day);
+
+  return new Intl.DateTimeFormat("es-ES", {
     year: "numeric",
     month: "long",
     day: "numeric",
-  });
-  return formatter.format(date);
+  }).format(date);
 }
 // Convierte genre numérico a texto
 export function formatGenre(genre?: number): string {

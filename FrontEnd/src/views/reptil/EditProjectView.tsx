@@ -1,19 +1,15 @@
-import { useQuery } from "@tanstack/react-query";
 import { useNavigate, useParams } from "react-router-dom";
-import { getReptilById } from "../../api/ReptilApi";
 import { EditReptileForm } from "../../component/reptil/EditReptilForm";
 import { reptilApiToForm } from "../../utils/reptilAdapters";
+import { useReptil } from "../../hooks/useReptil";
+import { useEffect } from "react";
 
 export default function EditProjectView() {
   const params = useParams();
   const reptilId = params.id!;
   const navigate = useNavigate();
 
-  const { data, isError, isLoading } = useQuery({
-    queryKey: ["editReptil", reptilId],
-    queryFn: () => getReptilById(reptilId!),
-    retry: false,
-  });
+  const { data, isError, isLoading } = useReptil(reptilId);
 
   if (isLoading) {
     return (
@@ -23,9 +19,15 @@ export default function EditProjectView() {
     );
   }
 
-  if (isError || !data) {
-    navigate("/404", { replace: true });
+  useEffect(() => {
+    if (isError) {
+      navigate("/404", { replace: true });
+    }
+  }, [isError, navigate]);
+
+  if (!data) {
     return null;
   }
+
   if (data) return <EditReptileForm data={reptilApiToForm(data)} reptilId={reptilId} />;
 }

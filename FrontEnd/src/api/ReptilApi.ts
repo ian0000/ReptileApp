@@ -55,7 +55,6 @@ type UpdateReptilArgs = {
 
 export async function updateReptileData({ formData, reptilId }: UpdateReptilArgs) {
   try {
-    console.log("Updating reptile with ID:", reptilId, "and data:", formData);
     const payload = reptilFormSchema.parse(formData);
 
     const { data } = await api.patch(`/reptiles/update-reptil/${reptilId}`, payload);

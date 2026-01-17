@@ -1,24 +1,33 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link, Navigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getReptiles } from "../api/ReptilApi";
 import { formatDate } from "../utils/utils";
+import { useEffect } from "react";
 
 export default function DashboardView() {
+  const navigate = useNavigate();
   const { data, isLoading, isError } = useQuery({
     queryKey: ["reptiles"],
     queryFn: getReptiles,
   });
 
+  useEffect(() => {
+    if (isError) {
+      navigate("/404", { replace: true });
+    }
+  }, [isError, navigate]);
+
   if (isLoading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
-        <p className="text-gray-400 text-lg animate-pulse">Cargando reptiles...</p>
+        <p className="text-gray-400 text-lg animate-pulse">Cargando reptil...</p>
       </div>
     );
   }
 
-  if (isError) return <Navigate to="/404" />;
-  if (!data) return null;
+  if (!data) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-sky-50">

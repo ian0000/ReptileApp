@@ -11,7 +11,7 @@ export async function createLogComidas(reptilId: ReptilId, formData: LogComidasF
   try {
     const payload = logComidasFormSchema.parse(formData);
     const { data } = await api.post(`/reptiles/${reptilId}/logComidas`, payload);
-    return schemas.LogComidas.parse(data);
+    return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error || "Error creating food log");
@@ -47,7 +47,7 @@ export async function getLogComidaById(
 ): Promise<LogComidas> {
   try {
     const { data } = await api.get(`/reptiles/${reptilId}/logComidas/${logComidaId}`);
-    return schemas.LogComidas.parse(data);
+    return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error || "Error fetching food log");
@@ -63,13 +63,13 @@ type UpdateLogComidasArgs = {
 };
 export async function updateLogComidasData({
   reptilId,
-  formData,
   logComidaId,
+  formData,
 }: UpdateLogComidasArgs) {
   try {
     const payload = logComidasFormSchema.parse(formData);
     const { data } = await api.patch(`/reptiles/${reptilId}/logComidas/${logComidaId}`, payload);
-    return schemas.LogComidas.parse(data);
+    return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error || "Error updating food log");

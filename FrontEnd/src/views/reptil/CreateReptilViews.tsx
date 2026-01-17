@@ -1,10 +1,8 @@
-import { useMutation } from "@tanstack/react-query";
 import type { ReptilFormData } from "../../types";
-import { toast } from "react-toastify";
 import { Link, useNavigate } from "react-router-dom";
-import { createReptil } from "../../api/ReptilApi";
 import { useForm } from "react-hook-form";
 import ReptilForm from "../../component/reptil/ReptilForm";
+import { useCreateReptil } from "../../hooks/useCreateReptil";
 
 export default function CreateReptilViews() {
   const navigate = useNavigate();
@@ -16,15 +14,8 @@ export default function CreateReptilViews() {
     genre: 1,
   };
 
-  const { mutate, isPending } = useMutation({
-    mutationFn: createReptil,
-    onError: (error: Error) => {
-      toast.error(error.message);
-    },
-    onSuccess: (data) => {
-      toast.success(data);
-      navigate("/");
-    },
+  const { mutate, isPending } = useCreateReptil(() => {
+    navigate("/");
   });
 
   const {
@@ -36,11 +27,7 @@ export default function CreateReptilViews() {
   });
 
   const handleForm = (formData: ReptilFormData) => {
-    const payload = {
-      ...formData,
-      genre: formData.genre,
-    };
-    mutate(payload);
+    mutate(formData);
   };
 
   return (
