@@ -25,12 +25,11 @@ export const noteFormSchema = z.object({
   humidity: z.number().min(0).max(100).optional(),
   temp: z.number().min(0).max(60).optional(),
   weight: z.number().min(0).optional(),
-  reptil: z.string(),
 });
 export type NoteForm = z.infer<typeof noteFormSchema>;
 export type NoteFormData = Pick<
   NoteForm,
-  "name" | "description" | "type" | "tags" | "weight" | "humidity" | "temp" | "reptil"
+  "name" | "description" | "type" | "tags" | "weight" | "humidity" | "temp"
 >;
 
 export const logPesajeFormSchema = z.object({

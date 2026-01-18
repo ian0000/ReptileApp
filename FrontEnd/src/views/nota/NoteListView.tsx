@@ -1,0 +1,113 @@
+import { useQuery } from "@tanstack/react-query";
+import { useNavigate, useParams } from "react-router-dom";
+import { getNotes } from "../../api/NotesApi";
+import { useEffect, useState } from "react";
+import NoteFormModal from "../../component/note/NoteFormModal";
+import type { NoteId } from "../../api/ids";
+import { formatDate } from "../../utils/utils";
+import NoteCard from "../../component/note/NoteCard";
+
+export default function NoteListView() {
+  const params = useParams();
+  const reptilId = params.id!;
+  const navigate = useNavigate();
+
+  const { data, isError, isLoading } = useQuery({
+    queryKey: ["notes", reptilId],
+    queryFn: () => getNotes(reptilId),
+  });
+
+  const [open, setOpen] = useState(false);
+  const [selectedNote, setSelectedNote] = useState<NoteId | null>(null);
+  useEffect(() => {
+    if (isError) {
+      navigate("/404", { replace: true });
+    }
+  }, [isError, navigate]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center">
+        <p className="text-gray-400 text-lg animate-pulse">Cargando reptil...</p>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return null;
+  }
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-sky-50">
+      <div className="max-w-7xl mx-auto px-6 py-10">
+        {/* Header */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-12">
+          <div>
+            <h1 className="text-4xl font-extrabold text-gray-900">Notas del Reptil 📝</h1>
+            <p className="text-gray-500 mt-2 text-lg">
+              Registra y administra observaciones importantes
+            </p>
+          </div>
+
+          <button
+            onClick={() => {
+              setSelectedNote(null);
+              setOpen(true);
+            }}
+            className="mt-6 sm:mt-0 inline-flex items-center gap-2
+                     bg-gradient-to-r from-emerald-500 to-sky-500
+                     hover:from-emerald-600 hover:to-sky-600
+                     text-white font-bold
+                     px-6 py-3 rounded-xl
+                     shadow-lg transition-all
+                     transform hover:-translate-y-0.5"
+          >
+            + Nueva Nota
+          </button>
+        </div>
+
+        {/* Grid */}
+        {data.length ? (
+          <ul role="list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {data.map((note) => (
+              <li key={note._id}>
+                {/* Glow */}
+                <NoteCard
+                  note={note}
+                  onClick={() => {
+                    setSelectedNote(note._id);
+                    setOpen(true);
+                  }}
+                ></NoteCard>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div className="bg-white rounded-2xl shadow-md p-14 text-center">
+            <p className="text-gray-500 text-xl">Este reptil no tiene notas</p>
+            <button
+              onClick={() => {
+                setSelectedNote(null);
+                setOpen(true);
+              }}
+              className="inline-block mt-6 font-bold text-emerald-600 hover:underline"
+            >
+              Agrega la primera nota 📝
+            </button>
+          </div>
+        )}
+
+        {/* Modal */}
+        {open && (
+          <NoteFormModal
+            reptilId={reptilId}
+            noteId={selectedNote ?? undefined}
+            onClose={() => {
+              setOpen(false);
+              setSelectedNote(null);
+            }}
+          />
+        )}
+      </div>
+    </div>
+  );
+}

@@ -42,7 +42,7 @@ export async function getLogPesajeById(
 ): Promise<LogPesaje> {
   try {
     const { data } = await api.get(`/reptiles/${reptilId}/logPesaje/${logPesajeId}`);
-    return schemas.LogPesaje.parse(data);
+    return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error || "Error fetching weight log");

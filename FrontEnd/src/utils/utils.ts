@@ -1,5 +1,4 @@
 export function formatDate(dateString: string): string {
-  console.log("Formatting date:", dateString);
   if (!dateString) return "";
 
   const [datePart] = dateString.split("T"); // YYYY-MM-DD

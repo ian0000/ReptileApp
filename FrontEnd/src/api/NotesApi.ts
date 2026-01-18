@@ -1,15 +1,12 @@
 import { isAxiosError } from "axios";
 import api from "../lib/axios";
 import { noteFormSchema, type NoteFormData } from "../types";
-import type { components } from "./types";
 import { schemas } from "./client";
-import type { NoteId, ReptilId } from "./ids";
-
-type Note = components["schemas"]["Note"];
+import type { Note, NoteId, ReptilId } from "./ids";
 
 export async function createNote(reptilId: ReptilId, formData: NoteFormData) {
   try {
-    const payload = noteFormSchema.parse(formData);
+    const payload = noteFormSchema.parse({ ...formData, reptil: reptilId });
 
     const { data } = await api.post(`/reptiles/${reptilId}/notes`, payload);
 
@@ -24,7 +21,7 @@ export async function createNote(reptilId: ReptilId, formData: NoteFormData) {
 
 export async function getNotes(
   reptilId: ReptilId,
-): Promise<Pick<Note, "_id" | "name" | "type" | "createdAt">[]> {
+): Promise<Pick<Note, "_id" | "name" | "type" | "description" | "createdAt">[]> {
   try {
     const { data } = await api.get(`/reptiles/${reptilId}/notes`);
     return schemas.Note.pick({ _id: true, name: true, type: true, createdAt: true })
@@ -40,8 +37,8 @@ export async function getNotes(
 
 export async function getNoteById(reptilId: ReptilId, noteId: NoteId): Promise<Note> {
   try {
-    const { data } = await api.get(`/reptiles/${reptilId}/notes/${noteId}`);
-    return schemas.Note.parse(data);
+    const response = await api.get(`/reptiles/${reptilId}/notes/${noteId}`);
+    return response.data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error || "Error fetching note");

@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import ReptilForm from "../../component/reptil/ReptilForm";
 import { useCreateReptil } from "../../hooks/useCreateReptil";
 
-export default function CreateReptilViews() {
+export default function CreateReptilView() {
   const navigate = useNavigate();
 
   const initialValues: ReptilFormData = {

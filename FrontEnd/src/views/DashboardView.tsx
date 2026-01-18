@@ -74,15 +74,35 @@ export default function DashboardView() {
                   <p className="text-gray-700 font-semibold">
                     {reptile.birthDate ? formatDate(reptile.birthDate) : "No registrada"}
                   </p>
-
                   <Link
                     to={`/reptiles/${reptile._id}`}
-                    className="inline-flex items-center mt-5
-                               text-emerald-600 font-bold
-                               hover:text-emerald-800 transition"
+                    className="text-emerald-600 font-bold hover:text-emerald-800 transition"
                   >
-                    Ver detalles →
+                    {" "}
+                    Ver detalles →{" "}
                   </Link>
+                  <div className="mt-5 flex flex-wrap gap-x-4 gap-y-2 text-sm">
+                    <Link
+                      to={`/reptiles/${reptile._id}/notas`}
+                      className="text-gray-500 hover:text-emerald-600 transition"
+                    >
+                      📝 Notas
+                    </Link>
+
+                    <Link
+                      to={`/reptiles/${reptile._id}/comidas`}
+                      className="text-gray-500 hover:text-emerald-600 transition"
+                    >
+                      🍽️ Comidas
+                    </Link>
+
+                    <Link
+                      to={`/reptiles/${reptile._id}/pesajes`}
+                      className="text-gray-500 hover:text-emerald-600 transition"
+                    >
+                      ⚖️ Pesajes
+                    </Link>
+                  </div>
                 </div>
               </li>
             ))}
