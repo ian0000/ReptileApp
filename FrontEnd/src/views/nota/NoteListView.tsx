@@ -4,8 +4,8 @@ import { getNotes } from "../../api/NotesApi";
 import { useEffect, useState } from "react";
 import NoteFormModal from "../../component/note/NoteFormModal";
 import type { NoteId } from "../../api/ids";
-import { formatDate } from "../../utils/utils";
 import NoteCard from "../../component/note/NoteCard";
+import { useDeleteNote } from "../../hooks/useDeleteNote";
 
 export default function NoteListView() {
   const params = useParams();
@@ -17,8 +17,12 @@ export default function NoteListView() {
     queryFn: () => getNotes(reptilId),
   });
 
+  const deleteMutation = useDeleteNote(reptilId);
+
   const [open, setOpen] = useState(false);
   const [selectedNote, setSelectedNote] = useState<NoteId | null>(null);
+  const [noteToDelete, setNoteToDelete] = useState<NoteId | null>(null);
+
   useEffect(() => {
     if (isError) {
       navigate("/404", { replace: true });
@@ -42,7 +46,17 @@ export default function NoteListView() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-12">
           <div>
+            <button
+              onClick={() => navigate(-1)}
+              className="mb-3 inline-flex items-center gap-2
+                 text-sm font-semibold text-gray-500
+                 hover:text-emerald-600 transition"
+            >
+              ← Volver
+            </button>
+
             <h1 className="text-4xl font-extrabold text-gray-900">Notas del Reptil 📝</h1>
+
             <p className="text-gray-500 mt-2 text-lg">
               Registra y administra observaciones importantes
             </p>
@@ -54,12 +68,12 @@ export default function NoteListView() {
               setOpen(true);
             }}
             className="mt-6 sm:mt-0 inline-flex items-center gap-2
-                     bg-gradient-to-r from-emerald-500 to-sky-500
-                     hover:from-emerald-600 hover:to-sky-600
-                     text-white font-bold
-                     px-6 py-3 rounded-xl
-                     shadow-lg transition-all
-                     transform hover:-translate-y-0.5"
+               bg-gradient-to-r from-emerald-500 to-sky-500
+               hover:from-emerald-600 hover:to-sky-600
+               text-white font-bold
+               px-6 py-3 rounded-xl
+               shadow-lg transition-all
+               transform hover:-translate-y-0.5"
           >
             + Nueva Nota
           </button>
@@ -77,6 +91,7 @@ export default function NoteListView() {
                     setSelectedNote(note._id);
                     setOpen(true);
                   }}
+                  onDelete={(id) => setNoteToDelete(id)}
                 ></NoteCard>
               </li>
             ))}
@@ -106,6 +121,46 @@ export default function NoteListView() {
               setSelectedNote(null);
             }}
           />
+        )}
+        {/* Nota */}
+        {noteToDelete && (
+          <div
+            className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm
+                  flex items-center justify-center px-4"
+          >
+            <div className="bg-white rounded-2xl max-w-sm w-full shadow-xl">
+              <div className="p-6">
+                <h3 className="text-lg font-extrabold text-gray-900">Eliminar nota</h3>
+
+                <p className="text-sm text-gray-600 mt-2">
+                  Esta acción no se puede deshacer. ¿Deseas continuar?
+                </p>
+
+                <div className="flex justify-end gap-3 mt-6">
+                  <button
+                    onClick={() => setNoteToDelete(null)}
+                    className="px-4 py-2 rounded-lg
+                       text-gray-600 font-semibold
+                       hover:bg-gray-100 transition"
+                  >
+                    Cancelar
+                  </button>
+
+                  <button
+                    onClick={async () => {
+                      deleteMutation.mutate(noteToDelete!);
+                      setNoteToDelete(null);
+                    }}
+                    className="px-4 py-2 rounded-xl
+                       bg-red-600 hover:bg-red-700
+                       text-white font-bold transition"
+                  >
+                    Eliminar
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </div>
