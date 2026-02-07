@@ -9,7 +9,7 @@ type LogPesaje = components["schemas"]["LogPesaje"];
 
 export async function createLogPesaje(reptilId: ReptilId, formData: LogPesajeFormData) {
   try {
-    const payload = logPesajeFormSchema.parse(formData);
+    const payload = logPesajeFormSchema.parse({ ...formData, reptil: reptilId });
 
     const { data } = await api.post(`/reptiles/${reptilId}/logPesaje`, payload);
     return data;
@@ -62,7 +62,7 @@ export async function updateLogPesajeData({
   formData,
 }: UpdateLogPesajeArgs) {
   try {
-    const payload = logPesajeFormSchema.parse(formData);
+    const payload = logPesajeFormSchema.parse({ ...formData, reptil: reptilId });
     const { data } = await api.patch(`/reptiles/${reptilId}/logPesaje/${logPesajeId}`, payload);
     return data;
   } catch (error) {

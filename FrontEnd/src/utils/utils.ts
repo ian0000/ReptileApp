@@ -36,3 +36,17 @@ export function formatDateForInput(date?: string | Date): string {
   // ⚠️ Date → string SIN UTC
   return date.toISOString().split("T")[0];
 }
+
+export type ZodIssue = {
+  code: string;
+  path: (string | number)[];
+  message: string;
+};
+export function isZodError(error: unknown): error is { issues: ZodIssue[] } {
+  return (
+    typeof error === "object" &&
+    error !== null &&
+    "issues" in error &&
+    Array.isArray((error as any).issues)
+  );
+}

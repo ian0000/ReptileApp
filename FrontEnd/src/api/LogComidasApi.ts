@@ -9,7 +9,7 @@ type LogComidas = components["schemas"]["LogComidas"];
 
 export async function createLogComidas(reptilId: ReptilId, formData: LogComidasFormData) {
   try {
-    const payload = logComidasFormSchema.parse(formData);
+    const payload = logComidasFormSchema.parse({ ...formData, reptil: reptilId });
     const { data } = await api.post(`/reptiles/${reptilId}/logComidas`, payload);
     return data;
   } catch (error) {
@@ -67,7 +67,7 @@ export async function updateLogComidasData({
   formData,
 }: UpdateLogComidasArgs) {
   try {
-    const payload = logComidasFormSchema.parse(formData);
+    const payload = logComidasFormSchema.parse({ ...formData, reptil: reptilId });
     const { data } = await api.patch(`/reptiles/${reptilId}/logComidas/${logComidaId}`, payload);
     return data;
   } catch (error) {

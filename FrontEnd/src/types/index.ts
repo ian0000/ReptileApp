@@ -1,11 +1,5 @@
 import { z } from "zod";
 import { schemas } from "../api/client";
-// reptil
-// export const genreSchema = z.number().transform((value) => {
-//   if (value === 1) return "macho";
-//   if (value === 2) return "hembra";
-//   return "indefinido";
-// });
 
 export const reptilFormSchema = z.object({
   name: z.string().min(1),
@@ -44,7 +38,7 @@ export const logPesajeFormSchema = z.object({
 export type LogPesajeForm = z.infer<typeof logPesajeFormSchema>;
 export type LogPesajeFormData = Pick<
   LogPesajeForm,
-  "peso" | "unidad" | "contexto" | "observaciones" | "diferencia" | "reptil"
+  "peso" | "unidad" | "contexto" | "observaciones"
 >;
 
 export const logComidasFormSchema = z.object({
@@ -70,5 +64,4 @@ export type LogComidasFormData = Pick<
   | "observaciones"
   | "excreto"
   | "apetito"
-  | "reptil"
 >;

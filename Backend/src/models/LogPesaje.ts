@@ -41,33 +41,8 @@ const LogPesajeSchema: Schema = new Schema<ILogPesaje>(
       required: true,
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-LogPesajeSchema.pre("save", async function (next: NextFunction) {
-  try {
-    // Evitar recalcular si el documento no es nuevo o no cambió el peso
-    if (!this.isNew && !this.isModified("peso")) {
-      return next();
-    }
-
-    const ultimoPesaje = await mongoose
-      .model<ILogPesaje>("LogPesaje")
-      .findOne({ reptil: this.reptil })
-      .sort({ createdAt: -1 });
-
-    if (ultimoPesaje) {
-      const diferencia = Number(this.peso ?? 0) - Number(ultimoPesaje.peso ?? 0);
-
-      this.diferencia = Math.round(diferencia * 100) / 100;
-    } else {
-      this.diferencia = 0; // primer pesaje
-    }
-
-    next();
-  } catch (error) {
-    next(error);
-  }
-});
 const LogPesaje = mongoose.model<ILogPesaje>("LogPesaje", LogPesajeSchema);
 export default LogPesaje;

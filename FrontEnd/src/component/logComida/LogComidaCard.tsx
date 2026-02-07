@@ -1,12 +1,15 @@
-import type { LogPesaje, LogPesajeId } from "../../api/ids";
+import type { LogComidas, LogComidasId } from "../../api/ids";
 
-type LogPesajeCardProps = {
-  log: Pick<LogPesaje, "_id" | "peso" | "unidad" | "contexto" | "createdAt">;
+type LogComidaCardProps = {
+  log: Pick<
+    LogComidas,
+    "_id" | "cantidad" | "unidad" | "tipoAlimento" | "metodo" | "apetito" | "excreto" | "createdAt"
+  >;
   onClick?: () => void;
-  onDelete?: (id: LogPesajeId) => void;
+  onDelete?: (id: LogComidasId) => void;
 };
 
-export default function LogPesajeCard({ log, onClick, onDelete }: LogPesajeCardProps) {
+export default function LogComidaCard({ log, onClick, onDelete }: LogComidaCardProps) {
   return (
     <div
       onClick={onClick}
@@ -17,18 +20,33 @@ export default function LogPesajeCard({ log, onClick, onDelete }: LogPesajeCardP
       {/* Glow */}
       <div
         className="absolute -top-16 -right-16 w-32 h-32
-                   bg-sky-400/10 rounded-full blur-3xl
+                   bg-amber-400/10 rounded-full blur-3xl
                    opacity-70 group-hover:opacity-100 transition"
       />
 
       <div className="relative">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <div className="text-2xl font-extrabold text-gray-800">
-              {log.peso} <span className="text-base font-semibold text-gray-500">{log.unidad}</span>
+            <h3 className="text-lg font-extrabold text-gray-800">
+              {log.cantidad} {log.unidad ?? ""} · {log.tipoAlimento}
+            </h3>
+
+            <div className="text-sm text-gray-500 mt-1 space-x-2">
+              {log.metodo && <span>{log.metodo}</span>}
+              {log.apetito && <span>⭐ {log.apetito}</span>}
             </div>
 
-            <p className="text-sm text-gray-500 mt-1">{log.contexto ?? "Sin contexto"}</p>
+            {log.excreto && (
+              <span
+                className="inline-block mt-2
+                               text-xs font-semibold
+                               text-emerald-700
+                               bg-emerald-100
+                               px-2 py-0.5 rounded-full"
+              >
+                Excretó
+              </span>
+            )}
           </div>
 
           <div className="flex flex-col items-end gap-2">
