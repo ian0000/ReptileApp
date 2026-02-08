@@ -9,12 +9,14 @@ type LogComidas = components["schemas"]["LogComidas"];
 
 export async function createLogComidas(reptilId: ReptilId, formData: LogComidasFormData) {
   try {
+    console.log(formData);
+
     const payload = logComidasFormSchema.parse({ ...formData, reptil: reptilId });
     const { data } = await api.post(`/reptiles/${reptilId}/logComidas`, payload);
     return data;
   } catch (error) {
     if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error || "Error creating food log");
+      throw new Error(error.response.data.errors[0].msg + error.response.data.errors[0].path);
     }
     throw error;
   }
@@ -22,7 +24,7 @@ export async function createLogComidas(reptilId: ReptilId, formData: LogComidasF
 
 export async function getLogComidas(
   reptilId: ReptilId,
-): Promise<Pick<LogComidas, "_id" | "tipoAlimento" | "cantidad" | "createdAt">[]> {
+): Promise<Pick<LogComidas, "_id" | "tipoAlimento" | "cantidad" | "nextFeeding" | "createdAt">[]> {
   try {
     const { data } = await api.get(`/reptiles/${reptilId}/logComidas`);
     return schemas.LogComidas.pick({
@@ -30,6 +32,7 @@ export async function getLogComidas(
       tipoAlimento: true,
       cantidad: true,
       createdAt: true,
+      nextFeeding: true,
     })
       .array()
       .parse(data);

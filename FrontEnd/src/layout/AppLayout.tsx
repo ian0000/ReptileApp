@@ -1,15 +1,29 @@
-import { Link, Outlet } from "react-router-dom";
+import { Link, Navigate, Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { useQuery } from "@tanstack/react-query";
 import { getReptiles } from "../api/ReptilApi";
+import { useAuth } from "../hooks/useAuth";
 
 export default function AppLayout() {
-  const { data } = useQuery({
+  const { data, isError, isLoading } = useAuth();
+
+  const { data: reptilesData } = useQuery({
     queryKey: ["reptiles"],
     queryFn: getReptiles,
+    enabled: !!data,
   });
 
-  const reptileCount = data?.length ?? 0;
+  if (isLoading) {
+    return (
+      <div className="min-h-[70vh] flex items-center justify-center">
+        <p className="text-gray-400 text-lg animate-pulse">Cargando reptil...</p>
+      </div>
+    );
+  }
+  if (isError) {
+    return <Navigate to="/auth/login" replace />;
+  }
+  const reptileCount = reptilesData?.length ?? 0;
 
   return (
     <div
@@ -93,11 +107,23 @@ export default function AppLayout() {
 
       {/* Toast */}
       <ToastContainer
+        position="top-center"
+        autoClose={4000}
+        newestOnTop
         pauseOnHover={false}
         pauseOnFocusLoss={false}
-        toastClassName="rounded-xl shadow-lg
-                        bg-white dark:bg-gray-800
-                        text-gray-800 dark:text-gray-100"
+        closeOnClick
+        draggable
+        limit={3}
+        className="!z-[9999] mt-20"
+        toastStyle={{
+          borderRadius: "0.75rem",
+          boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
+        }}
+        toastClassName="
+    bg-white dark:bg-gray-800
+    text-gray-800 dark:text-gray-100
+  "
       />
     </div>
   );

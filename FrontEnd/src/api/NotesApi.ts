@@ -18,13 +18,35 @@ export async function createNote(reptilId: ReptilId, formData: NoteFormData) {
     throw error;
   }
 }
+export type NoteListItem = Pick<
+  Note,
+  | "_id"
+  | "name"
+  | "type"
+  | "description"
+  | "createdAt"
+  | "tags"
+  | "temp"
+  | "humidity"
+  | "weight"
+  | "createdBy"
+>;
 
-export async function getNotes(
-  reptilId: ReptilId,
-): Promise<Pick<Note, "_id" | "name" | "type" | "description" | "createdAt">[]> {
+export async function getNotes(reptilId: ReptilId): Promise<NoteListItem[]> {
   try {
     const { data } = await api.get(`/reptiles/${reptilId}/notes`);
-    return schemas.Note.pick({ _id: true, name: true, type: true, createdAt: true })
+    return schemas.Note.pick({
+      _id: true,
+      name: true,
+      type: true,
+      description: true,
+      createdAt: true,
+      tags: true,
+      temp: true,
+      humidity: true,
+      weight: true,
+      createdBy: true,
+    })
       .array()
       .parse(data);
   } catch (error) {

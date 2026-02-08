@@ -97,7 +97,7 @@ export default function NoteForm({ register, errors }: NoteFormProps) {
           <label className="block text-sm font-semibold text-gray-700 mb-1">Peso (opcional)</label>
           <input
             type="number"
-            step="0.01"
+            step=".1"
             {...register("weight", { valueAsNumber: true })}
             className="w-full rounded-xl border border-gray-200
                      px-4 py-2.5 text-gray-800
@@ -113,7 +113,8 @@ export default function NoteForm({ register, errors }: NoteFormProps) {
           <label className="block text-sm font-semibold text-gray-700 mb-1">Temperatura (°C)</label>
           <input
             type="number"
-            step="0.1"
+            step="1"
+            max={60}
             {...register("temp", { valueAsNumber: true })}
             className="w-full rounded-xl border border-gray-200
                      px-4 py-2.5 text-gray-800
@@ -130,6 +131,7 @@ export default function NoteForm({ register, errors }: NoteFormProps) {
           <input
             type="number"
             step="1"
+            max={100}
             {...register("humidity", { valueAsNumber: true })}
             className="w-full rounded-xl border border-gray-200
                      px-4 py-2.5 text-gray-800

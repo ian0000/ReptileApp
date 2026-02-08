@@ -26,7 +26,7 @@ export class ReptilController {
     try {
       const reptiles = await Reptil.find({
         $or: [{ owner: { $in: req.user.id } }],
-      });
+      }).populate("owner", "name email");
       res.json(reptiles);
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
@@ -36,7 +36,7 @@ export class ReptilController {
   static getReptileById = async (req: Request, res: Response) => {
     try {
       var { id } = req.params;
-      const reptil = await Reptil.findById(id);
+      const reptil = await Reptil.findById(id).populate("owner", "name email");
       if (!reptil) {
         const error = new Error("Reptil no encontrado");
         res.status(404).json({
@@ -44,10 +44,7 @@ export class ReptilController {
         });
         return;
       }
-      if (reptil.owner.toString() !== req.user.id.toString()) {
-        const error = new Error("Accion no valida");
-        res.status(404).json({ error: error.message });
-      }
+
       res.json(reptil);
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
@@ -56,32 +53,65 @@ export class ReptilController {
 
   static updateReptil = async (req: Request, res: Response) => {
     try {
-      var { reptileID } = req.params;
-
+      const { id: reptileID } = req.params;
       const { name } = req.body;
-      const reptileExist = await Reptil.findOne({ name });
-      if (reptileExist && reptileExist.id != reptileID) {
-        const error = new Error("Ya esta usando ese nombre de reptil");
-        res.status(409).json({ error: error.message });
-        return;
+
+      // 🔐 Validar owner (porque es update por ID)
+      const ownerId =
+        typeof req.reptil.owner === "object" ? req.reptil.owner._id : req.reptil.owner;
+      if (req.user._id.toString() !== ownerId.toString()) {
+        return res.status(403).json({ error: "Acción no válida" });
       }
 
-      // Actualizar solo los campos enviados
+      if (name && name !== req.reptil.name) {
+        const nameInUse = await Reptil.findOne({
+          name,
+          owner: req.user._id,
+          _id: { $ne: reptileID },
+        });
+
+        if (nameInUse) {
+          return res.status(409).json({
+            error: "Ya estás usando ese nombre de reptil",
+          });
+        }
+      }
+
+      // ✏️ Actualizar solo campos enviados
       Object.assign(req.reptil, req.body);
       await req.reptil.save();
 
-      res.json({ message: "Reptil actualizado correctamente", reptil: req.reptil });
+      return res.json({
+        message: "Reptil actualizado correctamente",
+        reptil: req.reptil,
+      });
     } catch (error) {
-      res.status(500).json({ error: "Hubo un error" });
+      return res.status(500).json({
+        error: error instanceof Error ? error.message : "Error interno",
+      });
     }
   };
 
   static deleteReptil = async (req: Request, res: Response) => {
     try {
+      const ownerId =
+        typeof req.reptil.owner === "object" ? req.reptil.owner._id : req.reptil.owner;
+
+      if (req.user._id.toString() !== ownerId.toString()) {
+        return res.status(403).json({
+          error: "Acción no válida",
+        });
+      }
+
       await req.reptil.deleteOne();
-      res.json({ message: "Reptil eliminado correctamente" });
+
+      return res.json({
+        message: "Reptil eliminado correctamente",
+      });
     } catch (error) {
-      res.status(500).json({ error: "Hubo un error" });
+      return res.status(500).json({
+        error: error instanceof Error ? error.message : "Error interno",
+      });
     }
   };
 }

@@ -80,6 +80,23 @@ router.use(authenticate);
  *         - Nuevo ejemplar
  *         - Otro
  */
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     UserBasic:
+ *       type: object
+ *       description: Usuario básico (owner poblado)
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: ID del usuario
+ *           example: 65a1bc23ff12a9c33b0eaaaa
+ *         name:
+ *           type: string
+ *           description: Nombre del usuario
+ *           example: Ian
+ */
 
 /**
  * @swagger
@@ -118,6 +135,8 @@ router.use(authenticate);
  *           type: array
  *           items:
  *             type: string
+ *         owner:
+ *           $ref: "#/components/schemas/UserBasic"
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -151,7 +170,7 @@ router.use(authenticate);
 router.post(
   "/create-reptil",
   body("name").notEmpty().withMessage("El nombre del reptil es obligatorio."),
-  body("birthday")
+  body("birthDate")
     .optional()
     .isDate()
     .withMessage("La fecha de nacimiento debe ser tipo fecha 'yyyy-MM-dddd.'"),
@@ -302,6 +321,8 @@ router.delete(
  *         reptil:
  *           type: string
  *           description: ID del reptil
+ *         createdBy:
+ *           $ref: "#/components/schemas/UserBasic"
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -544,6 +565,8 @@ router.patch(
  *         reptil:
  *           type: string
  *           description: ID del reptil
+ *         createdBy:
+ *           $ref: "#/components/schemas/UserBasic"
  *         createdAt:
  *           type: string
  *           format: date-time
@@ -783,9 +806,14 @@ router.patch(
  *           type: number
  *           minimum: 1
  *           maximum: 5
+ *         nextFeeding:
+ *           type: number
+ *           minimum: 1
  *         reptil:
  *           type: string
  *           description: ID del reptil
+ *         createdBy:
+ *           $ref: "#/components/schemas/UserBasic"
  *         createdAt:
  *           type: string
  *           format: date-time

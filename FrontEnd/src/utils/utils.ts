@@ -1,3 +1,5 @@
+import z from "zod";
+
 export function formatDate(dateString: string): string {
   if (!dateString) return "";
 
@@ -27,13 +29,9 @@ export function formatGenre(genre?: number): string {
 }
 export function formatDateForInput(date?: string | Date): string {
   if (!date) return "";
-
-  // 🔥 SIEMPRE tratar como string
   if (typeof date === "string") {
     return date.split("T")[0];
   }
-
-  // ⚠️ Date → string SIN UTC
   return date.toISOString().split("T")[0];
 }
 
@@ -50,3 +48,8 @@ export function isZodError(error: unknown): error is { issues: ZodIssue[] } {
     Array.isArray((error as any).issues)
   );
 }
+export const numberOptional = (schema: z.ZodNumber) =>
+  z.preprocess(
+    (val) => (val === "" || val === null || Number.isNaN(val) ? undefined : Number(val)),
+    schema.optional(),
+  );

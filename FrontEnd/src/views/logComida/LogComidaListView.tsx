@@ -4,8 +4,8 @@ import { getLogComidas } from "../../api/LogComidasApi";
 import { useEffect, useState } from "react";
 import type { LogComidasId } from "../../api/ids";
 import LogComidaFormModal from "../../component/logComida/logComidaFormModal";
-import LogComidaCard from "../../component/logComida/logComidaCard";
 import { useDeleteLogComidas } from "../../hooks/useDeleteLogComidas";
+import LogComidaCard from "../../component/logComida/LogComidaCard";
 
 export default function LogComidaListView() {
   const params = useParams();
@@ -32,7 +32,7 @@ export default function LogComidaListView() {
   if (isLoading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
-        <p className="text-gray-400 text-lg animate-pulse">Cargando reptil...</p>
+        <p className="text-gray-400 text-lg animate-pulse">Cargando r5eptil...</p>
       </div>
     );
   }
@@ -40,6 +40,9 @@ export default function LogComidaListView() {
   if (!data) {
     return null;
   }
+  const sortedLogs = [...data].sort(
+    (a, b) => new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime(),
+  );
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-sky-50">
       <div className="max-w-7xl mx-auto px-6 py-10">
@@ -79,11 +82,12 @@ export default function LogComidaListView() {
         {/* GRID */}
         {data.length ? (
           <ul role="list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-            {data.map((log) => (
+            {sortedLogs.map((log, index) => (
               <li key={log._id}>
                 {/* Glow */}
                 <LogComidaCard
                   log={log}
+                  isLatest={index === 0}
                   onClick={() => {
                     setSelectedLogComida(log._id);
                     setOpen(true);

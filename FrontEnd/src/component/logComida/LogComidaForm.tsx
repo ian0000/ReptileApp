@@ -110,20 +110,22 @@ export default function LogComidaForm({ register, errors }: LogComidaFormProps) 
         <div>
           <label className="block text-sm font-semibold text-gray-700 mb-1">Apetito</label>
           <select
-            {...register("apetito", { valueAsNumber: true })}
+            {...register("apetito", {
+              setValueAs: (v) => (v === "" ? undefined : Number(v)),
+            })}
             className="w-full rounded-xl border border-gray-200
-                       px-4 py-2.5 text-gray-800 bg-white
-                       focus:outline-none focus:ring-2
-                       focus:ring-emerald-500/30
-                       focus:border-emerald-500
-                       transition"
+             px-4 py-2.5 text-gray-800 bg-white
+             focus:outline-none focus:ring-2
+             focus:ring-emerald-500/30
+             focus:border-emerald-500
+             transition"
           >
-            <option value="">No especificado</option>
-            {[1, 2, 3, 4, 5].map((n) => (
-              <option key={n} value={n}>
-                {n}
-              </option>
-            ))}
+            <option value={0}>No especificado</option>
+            <option value={1}>⭐ Muy bajo</option>
+            <option value={2}>⭐⭐ Bajo</option>
+            <option value={3}>⭐⭐⭐ Normal</option>
+            <option value={4}>⭐⭐⭐⭐ Bueno</option>
+            <option value={5}>⭐⭐⭐⭐⭐ Excelente</option>
           </select>
         </div>
 
@@ -154,7 +156,27 @@ export default function LogComidaForm({ register, errors }: LogComidaFormProps) 
           placeholder="Ej: calcio, multivitamínico"
         />
       </div>
-
+      {/* Próxima comida */}
+      <div>
+        <label className="block text-sm font-semibold text-gray-700 mb-1">
+          Próxima comida (días)
+        </label>
+        <input
+          type="number"
+          min={1}
+          step={1}
+          placeholder="Ej: 2"
+          {...register("nextFeeding", {
+            setValueAs: (v) => (v === "" ? undefined : Number(v)),
+          })}
+          className="w-full rounded-xl border border-gray-200
+               px-4 py-2.5 text-gray-800
+               focus:outline-none focus:ring-2
+               focus:ring-emerald-500/30
+               focus:border-emerald-500
+               transition"
+        />
+      </div>
       {/* Observaciones */}
       <div>
         <label className="block text-sm font-semibold text-gray-700 mb-1">Observaciones</label>

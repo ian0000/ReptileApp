@@ -1,6 +1,8 @@
 import mongoose, { Date, Document, PopulatedDoc, Schema, Types } from "mongoose";
 import Nota from "./Nota";
 import { IUser } from "./User";
+import LogPesaje from "./LogPesaje";
+import LogComidas from "./LogComidas";
 
 export interface IReptil extends Document {
   name: string;
@@ -62,7 +64,11 @@ const ReptilSchema: Schema = new Schema<IReptil>(
 ReptilSchema.pre("deleteOne", { document: true, query: false }, async function () {
   const reptilId = this._id;
   if (!reptilId) return;
-  await Nota.deleteMany({});
+
+  await Nota.deleteMany({ reptil: reptilId });
+  await LogPesaje.deleteMany({ reptil: reptilId });
+  await LogComidas.deleteMany({ reptil: reptilId });
 });
+
 const Reptil = mongoose.model<IReptil>("Reptil", ReptilSchema);
 export default Reptil;

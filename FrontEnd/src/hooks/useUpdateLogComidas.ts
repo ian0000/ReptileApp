@@ -23,7 +23,6 @@ export function useUpdateLogComidas(
       onSuccess?.();
     },
     onError: (error: unknown) => {
-      console.log(error);
       // 1️⃣ ZodError real (como el que tienes)
       if (isZodError(error)) {
         error.issues.forEach((issue) => {

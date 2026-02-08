@@ -22,12 +22,16 @@ export async function createReptil(formData: ReptilFormData) {
   }
 }
 
-export async function getReptiles(): Promise<Pick<Reptil, "_id" | "name" | "birthDate">[]> {
+export async function getReptiles(): Promise<
+  Pick<Reptil, "_id" | "name" | "birthDate" | "owner">[]
+> {
   try {
     const { data } = await api.get("/reptiles");
 
     // Validación API (opcional)
-    return schemas.Reptil.pick({ _id: true, name: true, birthDate: true }).array().parse(data);
+    return schemas.Reptil.pick({ _id: true, name: true, birthDate: true, owner: true })
+      .array()
+      .parse(data);
   } catch (error) {
     if (isAxiosError(error) && error.response) {
       throw new Error(error.response.data.error || "Error fetching reptiles");

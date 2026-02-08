@@ -10,7 +10,6 @@ export function useCreateLogPesaje(reptilId: ReptilId, onsuccess?: () => void) {
   return useMutation({
     mutationFn: (formdata: LogPesajeFormData) => createLogPesaje(reptilId, formdata),
     onError: (error: unknown) => {
-      console.log(error);
       // 1️⃣ ZodError real (como el que tienes)
       if (isZodError(error)) {
         error.issues.forEach((issue) => {

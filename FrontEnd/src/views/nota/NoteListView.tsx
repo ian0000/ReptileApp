@@ -32,7 +32,7 @@ export default function NoteListView() {
   if (isLoading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
-        <p className="text-gray-400 text-lg animate-pulse">Cargando reptil...</p>
+        <p className="text-gray-400 text-lg animate-pulse">Cargando repti6l...</p>
       </div>
     );
   }

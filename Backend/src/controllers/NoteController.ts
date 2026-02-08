@@ -17,7 +17,7 @@ export class NoteController {
 
   static getAllNotes = async (req: Request, res: Response) => {
     try {
-      const notes = await Nota.find({ reptil: req.reptil.id }).populate("reptil");
+      const notes = await Nota.find({ reptil: req.reptil.id }).populate("createdBy", "name");
       res.json(notes);
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
@@ -26,10 +26,12 @@ export class NoteController {
 
   static getNoteByID = async (req: Request, res: Response) => {
     try {
-      const note = await Nota.findById(req.nota.id).populate({
-        path: "reptil",
-        select: "id name",
-      });
+      const note = await Nota.findById(req.nota.id)
+        .populate({
+          path: "reptil",
+          select: "id name",
+        })
+        .populate("createdBy", "name");
       res.json(note);
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });

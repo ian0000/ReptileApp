@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 const Genre = z.union([z.literal(1), z.literal(2), z.literal(3)]);
+const UserBasic = z.object({ _id: z.string(), name: z.string() }).partial().passthrough();
 const Reptil = z
   .object({
     _id: z.string().optional(),
@@ -11,6 +12,7 @@ const Reptil = z
     notas: z.array(z.string()).optional(),
     logPesaje: z.array(z.string()).optional(),
     logComida: z.array(z.string()).optional(),
+    owner: UserBasic.optional(),
     createdAt: z.string().datetime({ offset: true }).optional(),
     updatedAt: z.string().datetime({ offset: true }).optional(),
   })
@@ -28,6 +30,7 @@ const Note = z
     humidity: z.number().optional(),
     temp: z.number().optional(),
     reptil: z.string(),
+    createdBy: UserBasic.optional(),
     createdAt: z.string().datetime({ offset: true }).optional(),
     updatedAt: z.string().datetime({ offset: true }).optional(),
   })
@@ -52,6 +55,7 @@ const LogPesaje = z
     observaciones: z.string().optional(),
     diferencia: z.number().optional(),
     reptil: z.string(),
+    createdBy: UserBasic.optional(),
     createdAt: z.string().datetime({ offset: true }).optional(),
     updatedAt: z.string().datetime({ offset: true }).optional(),
   })
@@ -79,7 +83,9 @@ const LogComidas = z
     observaciones: z.string().optional(),
     excreto: z.boolean().optional(),
     apetito: z.number().gte(1).lte(5).optional(),
+    nextFeeding: z.number().gte(1).optional(),
     reptil: z.string(),
+    createdBy: UserBasic.optional(),
     createdAt: z.string().datetime({ offset: true }).optional(),
     updatedAt: z.string().datetime({ offset: true }).optional(),
   })
@@ -87,6 +93,7 @@ const LogComidas = z
 
 export const schemas = {
   Genre,
+  UserBasic,
   Reptil,
   TipoNota,
   TagsNota,

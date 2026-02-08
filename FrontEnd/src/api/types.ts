@@ -759,6 +759,19 @@ export interface components {
         MetodoAlimentacion: "manual" | "pinzas" | "libre" | "forzada" | "otro";
         /** @enum {string} */
         ContextoPesaje: "Control rutinario" | "Post muda" | "Pre cría" | "Post cría" | "Revisión por enfermedad" | "Cambio de dieta" | "Nuevo ejemplar" | "Otro";
+        /** @description Usuario básico (owner poblado) */
+        UserBasic: {
+            /**
+             * @description ID del usuario
+             * @example 65a1bc23ff12a9c33b0eaaaa
+             */
+            _id?: string;
+            /**
+             * @description Nombre del usuario
+             * @example Ian
+             */
+            name?: string;
+        };
         Reptil: {
             /** @example 65a1bc23ff12a9c33b0e9999 */
             _id?: string;
@@ -775,6 +788,7 @@ export interface components {
             notas?: string[];
             logPesaje?: string[];
             logComida?: string[];
+            owner?: components["schemas"]["UserBasic"];
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
@@ -796,6 +810,7 @@ export interface components {
             temp?: number;
             /** @description ID del reptil */
             reptil: string;
+            createdBy?: components["schemas"]["UserBasic"];
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
@@ -813,6 +828,7 @@ export interface components {
             diferencia?: number;
             /** @description ID del reptil */
             reptil: string;
+            createdBy?: components["schemas"]["UserBasic"];
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
@@ -832,8 +848,10 @@ export interface components {
             /** @example true */
             excreto?: boolean;
             apetito?: number;
+            nextFeeding?: number;
             /** @description ID del reptil */
             reptil: string;
+            createdBy?: components["schemas"]["UserBasic"];
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */

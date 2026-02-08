@@ -31,6 +31,7 @@ export default function LogComidaFormModal({ reptilId, logId, onClose }: LogComi
     observaciones: "",
     excreto: false,
     apetito: undefined,
+    nextFeeding: 1,
   };
   const {
     register,
@@ -54,6 +55,7 @@ export default function LogComidaFormModal({ reptilId, logId, onClose }: LogComi
         observaciones: log.observaciones,
         excreto: log.excreto,
         apetito: log.apetito,
+        nextFeeding: log.nextFeeding,
       });
     }
   }, [logId, log, reset]);

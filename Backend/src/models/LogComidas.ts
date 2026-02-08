@@ -10,6 +10,7 @@ export interface ILogComidas extends Document {
   observaciones?: string; // Notas adicionales
   excreto?: boolean; // Si hubo deposición luego
   apetito?: number;
+  nextFeeding?: number; // Cambio respecto al peso anterior
   reptil: Types.ObjectId;
   createdBy: Types.ObjectId;
 }
@@ -50,6 +51,10 @@ const LogComidasSchema: Schema = new Schema<ILogComidas>(
       type: Number,
       min: 1,
       max: 5,
+    },
+    nextFeeding: {
+      type: Number,
+      default: 1,
     },
     reptil: {
       type: Schema.Types.ObjectId,

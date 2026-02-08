@@ -3,10 +3,12 @@ import { formatDate, formatGenre } from "../../utils/utils";
 import { useReptil } from "../../hooks/useReptil";
 import { useDeleteReptil } from "../../hooks/useDeleteReptil";
 import { useEffect } from "react";
+import { useAuth } from "../../hooks/useAuth";
 
 export default function ReptilDetailsView() {
   const navigate = useNavigate();
   const { id: reptilId } = useParams();
+  const { data: user } = useAuth();
 
   const { data, isError, isLoading } = useReptil(reptilId!);
   const { mutate: deleteReptil } = useDeleteReptil(() => navigate("/"));
@@ -20,7 +22,7 @@ export default function ReptilDetailsView() {
   if (isLoading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
-        <p className="text-gray-400 text-lg animate-pulse">Cargando reptil...</p>
+        <p className="text-gray-400 text-lg animate-pulse">Cargando rep4til...</p>
       </div>
     );
   }
@@ -92,6 +94,10 @@ export default function ReptilDetailsView() {
                     {data.birthDate ? formatDate(data.birthDate) : "No registrada"}
                   </span>
                 </div>
+
+                <p className="text-sm text-gray-500">
+                  {data.owner?._id !== user._id && `Propietario: ${data.owner?.name}`}
+                </p>
               </div>
             </div>
 

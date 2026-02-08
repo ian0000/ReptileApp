@@ -4,8 +4,9 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getLogPesajes } from "../../api/LogPesajeApi";
 import type { LogPesajeId } from "../../api/ids";
 import LogPesajeFormModal from "../../component/logPesaje/LogPesajeFormModal";
-import LogPesajeCard from "../../component/logPesaje/logPesajeCard";
 import { useDeleteLogPesaje } from "../../hooks/useDeleteLogPesaje";
+import LogPesajeCard from "../../component/logPesaje/LogPesajeCard";
+import LogPesajeChart from "../../component/logPesaje/LogPesajeChart";
 
 export default function LogPesajeListView() {
   const params = useParams();
@@ -31,7 +32,7 @@ export default function LogPesajeListView() {
   if (isLoading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
-        <p className="text-gray-400 text-lg animate-pulse">Cargando reptil...</p>
+        <p className="text-gray-400 text-lg animate-pulse">Cargando rept3il...</p>
       </div>
     );
   }
@@ -39,7 +40,12 @@ export default function LogPesajeListView() {
   if (!data) {
     return null;
   }
-
+  const chartData = [...data]
+    .sort((a, b) => new Date(a.createdAt!).getTime() - new Date(b.createdAt!).getTime())
+    .map((log) => ({
+      date: new Date(log.createdAt!).toLocaleDateString(),
+      peso: log.peso,
+    }));
   return (
     <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-sky-50">
       <div className="max-w-7xl mx-auto px-6 py-10">
@@ -76,6 +82,8 @@ export default function LogPesajeListView() {
             + Nuevo Log
           </button>
         </div>
+        {/* Chart */}
+        {data.length > 1 && <LogPesajeChart data={chartData} />}
         {/* GRID */}
         {data.length ? (
           <ul role="list" className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -118,7 +126,6 @@ export default function LogPesajeListView() {
             }}
           />
         )}
-
         {/* Log */}
         {logPesajeToDelete && (
           <div
