@@ -17,8 +17,11 @@ import { logPesajeBelongsToReptil, logPesajeExist } from "../middleware/LogPesaj
 import { logComidaBelongsToReptil, logComidaExist } from "../middleware/LogComidas";
 import { LogPesajeController } from "../controllers/LogPesajeController";
 import { LogComidaController } from "../controllers/LogComidaController";
+import { authenticate } from "../middleware/auth";
 
 const router = Router();
+router.use(authenticate);
+
 /**
  * @swagger
  * components:

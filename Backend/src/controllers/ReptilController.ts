@@ -14,6 +14,7 @@ export class ReptilController {
 
       // crea reptil
       const reptil = new Reptil(req.body);
+      reptil.owner = req.user.id;
       await reptil.save();
       res.send("Reptil creado correctamente");
     } catch (error) {
@@ -23,7 +24,9 @@ export class ReptilController {
 
   static getAllReptiles = async (req: Request, res: Response) => {
     try {
-      const reptiles = await Reptil.find();
+      const reptiles = await Reptil.find({
+        $or: [{ owner: { $in: req.user.id } }],
+      });
       res.json(reptiles);
     } catch (error) {
       res.status(500).json({ error: "Hubo un error" });
@@ -40,6 +43,10 @@ export class ReptilController {
           error: error.message,
         });
         return;
+      }
+      if (reptil.owner.toString() !== req.user.id.toString()) {
+        const error = new Error("Accion no valida");
+        res.status(404).json({ error: error.message });
       }
       res.json(reptil);
     } catch (error) {

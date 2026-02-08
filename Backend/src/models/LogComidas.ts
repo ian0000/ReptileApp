@@ -11,6 +11,7 @@ export interface ILogComidas extends Document {
   excreto?: boolean; // Si hubo deposición luego
   apetito?: number;
   reptil: Types.ObjectId;
+  createdBy: Types.ObjectId;
 }
 
 const LogComidasSchema: Schema = new Schema<ILogComidas>(
@@ -55,8 +56,13 @@ const LogComidasSchema: Schema = new Schema<ILogComidas>(
       ref: "Reptil",
       required: true,
     },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const LogComidas = mongoose.model<ILogComidas>("LogComidas", LogComidasSchema);

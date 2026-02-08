@@ -3,7 +3,7 @@ import LogPesaje, { ILogPesaje } from "../models/LogPesaje";
 
 export class LogPesajeController {
   static createLog = async (req: Request<{}, {}, ILogPesaje, {}>, res: Response) => {
-    const log = new LogPesaje({ ...req.body, reptil: req.reptil._id });
+    const log = new LogPesaje({ ...req.body, reptil: req.reptil._id, createdBy: req.user.id });
     req.reptil.logPesaje.push(log.id);
     try {
       await Promise.all([req.reptil.save(), log.save()]);

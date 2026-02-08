@@ -10,6 +10,7 @@ export interface INota extends Document {
   humidity?: number;
   temp?: number;
   reptil: Types.ObjectId;
+  createdBy: Types.ObjectId;
 }
 
 const NotaSchema: Schema = new Schema<INota>(
@@ -47,8 +48,13 @@ const NotaSchema: Schema = new Schema<INota>(
       ref: "Reptil",
       required: true,
     },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const Nota = mongoose.model<INota>("Nota", NotaSchema);

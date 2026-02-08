@@ -3,7 +3,8 @@ import Nota, { INota } from "../models/Nota";
 
 export class NoteController {
   static createNote = async (req: Request<{}, {}, INota, {}>, res: Response) => {
-    const note = new Nota({ ...req.body, reptil: req.reptil._id });
+    const note = new Nota({ ...req.body, reptil: req.reptil._id, createdBy: req.user.id });
+
     req.reptil.notas.push(note.id);
     try {
       await Promise.all([req.reptil.save(), note.save()]);

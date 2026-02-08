@@ -3,7 +3,7 @@ import LogComidas, { ILogComidas } from "../models/LogComidas";
 
 export class LogComidaController {
   static createLog = async (req: Request<{}, {}, ILogComidas, {}>, res: Response) => {
-    const log = new LogComidas({ ...req.body, reptil: req.reptil._id });
+    const log = new LogComidas({ ...req.body, reptil: req.reptil._id, createdBy: req.user.id });
     req.reptil.logComida.push(log.id);
     try {
       await Promise.all([req.reptil.save(), log.save()]);

@@ -6,6 +6,7 @@ import { corsConfig } from "./config/cors";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 import reptileRouter from "./routes/reptileRouter";
+import authRouter from "./routes/authRouter";
 import { swaggerDocument } from "./swagger";
 
 dotenv.config();
@@ -24,6 +25,7 @@ app.get("/api-docs.json", (req, res) => {
 });
 app.use(cors(corsConfig));
 
+app.use("/api/auth", authRouter);
 app.use("/api/reptiles", reptileRouter);
 //Routes
 

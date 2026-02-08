@@ -9,6 +9,7 @@ export interface ILogPesaje extends Document {
   observaciones?: string; // Notas libres
   diferencia?: number; // Cambio respecto al peso anterior
   reptil: Types.ObjectId;
+  createdBy: Types.ObjectId;
 }
 
 const LogPesajeSchema: Schema = new Schema<ILogPesaje>(
@@ -38,6 +39,11 @@ const LogPesajeSchema: Schema = new Schema<ILogPesaje>(
     reptil: {
       type: Schema.Types.ObjectId,
       ref: "Reptil",
+      required: true,
+    },
+    createdBy: {
+      type: Schema.Types.ObjectId,
+      ref: "User",
       required: true,
     },
   },

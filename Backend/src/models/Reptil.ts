@@ -1,5 +1,6 @@
-import mongoose, { Date, Document, Schema, Types } from "mongoose";
+import mongoose, { Date, Document, PopulatedDoc, Schema, Types } from "mongoose";
 import Nota from "./Nota";
+import { IUser } from "./User";
 
 export interface IReptil extends Document {
   name: string;
@@ -9,6 +10,7 @@ export interface IReptil extends Document {
   notas: Types.ObjectId[];
   logPesaje: Types.ObjectId[];
   logComida: Types.ObjectId[];
+  owner: PopulatedDoc<IUser & Document>;
 }
 const ReptilSchema: Schema = new Schema<IReptil>(
   {
@@ -47,8 +49,12 @@ const ReptilSchema: Schema = new Schema<IReptil>(
         ref: "LogComida",
       },
     ],
+    owner: {
+      type: Types.ObjectId,
+      ref: "User",
+    },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 //middleware
