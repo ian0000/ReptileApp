@@ -1,6 +1,6 @@
 import { useForm } from "react-hook-form";
 import type { LogComidasId, ReptilId } from "../../api/ids";
-import type { LogComidasFormData, LogPesajeFormData } from "../../types";
+import type { LogComidasFormData } from "../../types";
 import { useEffect } from "react";
 import { useLogComida } from "../../hooks/useLogComidas";
 import { useCreateLogComidas } from "../../hooks/useCreateLogComidas";

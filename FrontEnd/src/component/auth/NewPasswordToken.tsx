@@ -28,30 +28,41 @@ export default function NewPasswordToken({
 
   const handleChange = (token: ConfirmToken["token"]) => {
     setToken(token);
+    if (token.length === 6) {
+      handleComplete;
+    }
   };
 
   const handleComplete = (token: ConfirmToken["token"]) => {
     mutate({ token });
   };
-
   return (
     <>
-      <form className="space-y-8 p-10 rounded-lg bg-white mt-10">
-        <label className="font-normal text-2xl text-center block">Código de 6 dígitos</label>
-        <div className="flex justify-center gap-5">
-          <PinInput value={token} onChange={handleChange} onComplete={handleComplete}>
-            <PinInputField className="h-10 w-10 p-3 rounded-lg border-gray-300 border placeholder-white" />
-            <PinInputField className="h-10 w-10 p-3 rounded-lg border-gray-300 border placeholder-white" />
-            <PinInputField className="h-10 w-10 p-3 rounded-lg border-gray-300 border placeholder-white" />
-            <PinInputField className="h-10 w-10 p-3 rounded-lg border-gray-300 border placeholder-white" />
-            <PinInputField className="h-10 w-10 p-3 rounded-lg border-gray-300 border placeholder-white" />
-            <PinInputField className="h-10 w-10 p-3 rounded-lg border-gray-300 border placeholder-white" />
-          </PinInput>
-        </div>
+      <form className="space-y-8 p-10 rounded-2xl bg-white mt-10 shadow-lg">
+        <label className="block text-center text-xl font-bold text-gray-800">
+          Código de 6 dígitos
+        </label>
+
+        <input
+          type="text"
+          inputMode="numeric"
+          autoComplete="one-time-code"
+          maxLength={6}
+          value={token}
+          onChange={(e) => handleChange(e.target.value)}
+          className="
+            mx-auto block w-48 text-center text-2xl tracking-widest
+            rounded-xl border border-gray-300 px-4 py-3
+            focus:outline-none focus:ring-2 focus:ring-emerald-500
+            transition
+          "
+          placeholder="••••••"
+        />
       </form>
+
       <nav className="mt-10 flex flex-col space-y-4">
         <Link to="/auth/forgot-password" className="text-center text-gray-300 font-normal">
-          Solicitar un nuevo Código
+          Solicitar un nuevo código
         </Link>
       </nav>
     </>

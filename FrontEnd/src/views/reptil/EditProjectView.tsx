@@ -14,7 +14,7 @@ export default function EditProjectView() {
   if (isLoading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
-        <p className="text-gray-400 text-lg animate-pulse">Cargando rep3til...</p>
+        <p className="text-gray-400 text-lg animate-pulse">Cargando reptil...</p>
       </div>
     );
   }

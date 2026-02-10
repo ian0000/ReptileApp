@@ -1,10 +1,11 @@
 import { Link, Navigate, Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getReptiles } from "../api/ReptilApi";
 import { useAuth } from "../hooks/useAuth";
 
 export default function AppLayout() {
+  const queryClient = useQueryClient();
   const { data, isError, isLoading } = useAuth();
 
   const { data: reptilesData } = useQuery({
@@ -24,6 +25,11 @@ export default function AppLayout() {
     return <Navigate to="/auth/login" replace />;
   }
   const reptileCount = reptilesData?.length ?? 0;
+
+  const logout = () => {
+    localStorage.removeItem("AUTH_TOKEN");
+    queryClient.resetQueries({ queryKey: ["user"] });
+  };
 
   return (
     <div
@@ -85,6 +91,18 @@ export default function AppLayout() {
             >
               + Reptil
             </Link>
+            {/* Cerrar sesión */}
+            <button
+              onClick={logout}
+              className="px-4 py-2 rounded-lg
+               border border-gray-200 dark:border-gray-700
+               text-gray-600 dark:text-gray-300
+               hover:bg-red-50 hover:text-red-600
+               dark:hover:bg-red-900/30 dark:hover:text-red-400
+               transition font-semibold"
+            >
+              Cerrar sesión
+            </button>
           </nav>
         </div>
       </header>

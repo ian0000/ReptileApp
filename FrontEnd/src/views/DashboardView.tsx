@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { getReptiles } from "../api/ReptilApi";
 import { formatDate } from "../utils/utils";
 import { useEffect } from "react";
@@ -8,7 +8,7 @@ import { useAuth } from "../hooks/useAuth";
 export default function DashboardView() {
   const navigate = useNavigate();
 
-  const { data: user, isLoading: authLoading } = useAuth();
+  const { data: user } = useAuth();
 
   const { data, isLoading, isError } = useQuery({
     queryKey: ["reptiles"],
@@ -23,7 +23,7 @@ export default function DashboardView() {
   if (isLoading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
-        <p className="text-gray-400 text-lg animate-pulse">Cargando rept2il...</p>
+        <p className="text-gray-400 text-lg animate-pulse">Cargando reptil...</p>
       </div>
     );
   }
