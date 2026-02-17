@@ -8,8 +8,7 @@ export const corsConfig: CorsOptions = {
     if (!origin) {
       return callback(null, true);
     }
-
-    if (origin === allowedOrigin) {
+    if (origin === allowedOrigin || origin.endsWith(".vercel.app")) {
       return callback(null, true);
     }
 
