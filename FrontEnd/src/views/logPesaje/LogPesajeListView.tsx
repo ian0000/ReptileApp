@@ -5,7 +5,7 @@ import { getLogPesajes } from "../../api/LogPesajeApi";
 import type { LogPesajeId } from "../../api/ids";
 import LogPesajeFormModal from "../../component/logPesaje/LogPesajeFormModal";
 import { useDeleteLogPesaje } from "../../hooks/useDeleteLogPesaje";
-import LogPesajeCard from "../../component/logPesaje/LogPesajeCard";
+import LogPesajeCard from "../../component/logPesaje/LLogPesajeCard";
 import LogPesajeChart from "../../component/logPesaje/LogPesajeChart";
 
 export default function LogPesajeListView() {
