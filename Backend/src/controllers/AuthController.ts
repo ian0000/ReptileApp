@@ -29,9 +29,9 @@ export class AuthController {
       token.token = generateToken();
       token.user = user.id;
       console.log({
-        host: process.env.EMAIL_HOST,
-        port: process.env.EMAIL_PORT,
-        user: process.env.EMAIL_USER,
+        host: process.env.SMTP_HOST,
+        port: process.env.SMTP_PORT,
+        user: process.env.SMTP_USER,
       });
 
       AuthEmail.sendConfirmationEmail({
