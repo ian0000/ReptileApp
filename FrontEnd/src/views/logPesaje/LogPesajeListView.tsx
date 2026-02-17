@@ -96,7 +96,7 @@ export default function LogPesajeListView() {
                     setSelectedLogPesaje(log._id);
                     setOpen(true);
                   }}
-                  onDelete={(id) => setLogPesajeToDelete(id)}
+                  onDelete={(id: LogPesajeId) => setLogPesajeToDelete(id)}
                 ></LogPesajeCard>
               </li>
             ))}
