@@ -17,7 +17,6 @@
     "gen:api": "npm run gen:types && npm run gen:schemas"
   },
   "dependencies": {
-    "@chakra-ui/react": "^3.32.0",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@headlessui/react": "^2.2.9",
@@ -37,7 +36,6 @@
     "recharts": "^3.7.0",
     "uuid": "^11.1.0",
     "zod": "^4.3.5",
-    "zodios": "^5.1.0",
     "zustand": "^5.0.8"
   },
   "devDependencies": {
