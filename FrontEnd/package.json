@@ -11,10 +11,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
-    "gen:types": "openapi-typescript http://localhost:4000/api-docs.json -o src/api/types.ts",
-    "gen:schemas": "openapi-zod-client http://localhost:4000/api-docs.json --output src/api/client.ts",
-    "gen:api": "npm run gen:types && npm run gen:schemas"
+    "preview": "vite preview"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.32.0",
