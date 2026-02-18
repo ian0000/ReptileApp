@@ -29,6 +29,7 @@ export class AuthController {
       token.token = generateToken();
       token.user = user.id;
 
+      console.log("kdajsldjasl");
       AuthEmail.sendConfirmationEmail({
         email: user.email,
         name: user.name,
@@ -127,6 +128,7 @@ export class AuthController {
       token.token = generateToken();
       token.user = user.id;
 
+      console.log("kdajsldjasl");
       AuthEmail.sendConfirmationEmail({
         email: user.email,
         name: user.name,
