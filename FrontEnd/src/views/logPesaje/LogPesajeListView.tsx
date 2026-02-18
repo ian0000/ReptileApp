@@ -111,7 +111,7 @@ export default function LogPesajeListView() {
               }}
               className="inline-block mt-6 font-bold text-emerald-600 hover:underline"
             >
-              Agrega la primera nota 📝
+              Agrega el primer log 📝
             </button>
           </div>
         )}

@@ -88,7 +88,7 @@ export default function LogComidaFormModal({ reptilId, logId, onClose }: LogComi
         {/* Body */}
         <div className="p-6">
           {isEdit && isLoading ? (
-            <p className="text-center py-10 text-gray-500">Cargando logs</p>
+            <p className="text-center py-10 text-gray-500">Cargando logs...</p>
           ) : (
             <form onSubmit={handleSubmit(handleForm)}>
               <LogComidaForm register={register} errors={errors} />
