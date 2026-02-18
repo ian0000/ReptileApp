@@ -106,7 +106,7 @@ export class AuthEmail {
   static sendPasswordResetToken = async (user: IEmail) => {
     const resend = new Resend(process.env.RESEND_API_KEY);
     const info = await resend.emails.send({
-      from: "ReptilApp 🦎 <onboarding@resend.dev>",
+      from: "ReptilApp 🦎 <no-reply@ian-k.dev>",
       to: user.email,
       subject: "🔐 Restablece tu contraseña en ReptilApp",
       html: `
