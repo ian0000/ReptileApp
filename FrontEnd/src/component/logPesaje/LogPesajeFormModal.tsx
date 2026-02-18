@@ -68,17 +68,17 @@ export default function LogPesajeFormModal({ reptilId, logId, onClose }: LogPesa
         {/* Header */}
         <div className="px-6 py-4 border-b">
           <h2 className="text-xl font-extrabold text-gray-900">
-            {isEdit ? "Editar Nota" : "Nueva Nota"}
+            {isEdit ? "Editar Pesaje" : "Nuevo Pesaje"}
           </h2>
           <p className="text-sm text-gray-500 mt-1">
-            {isEdit ? "Actualiza la información de la nota" : "Registra una nueva observación"}
+            {isEdit ? "Actualiza la información del log" : "Registra un nuevo log"}
           </p>
         </div>
 
         {/* Body */}
         <div className="p-6">
           {isEdit && isLoading ? (
-            <p className="text-center py-10 text-gray-500">Cargando nota…</p>
+            <p className="text-center py-10 text-gray-500">Cargando logs...</p>
           ) : (
             <form onSubmit={handleSubmit(handleForm)}>
               <LogPesajeForm register={register} errors={errors} />
