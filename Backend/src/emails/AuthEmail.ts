@@ -8,19 +8,22 @@ interface IEmail {
 
 export class AuthEmail {
   static sendConfirmationEmail = async (user: IEmail) => {
-    console.log("email?");
+    console.log("Antes sendMail");
+
     try {
       const info = await transporter.sendMail({
         from: '"ReptileApp" <no-reply@reptileapp.com>',
         to: user.email,
         subject: "Test",
-        text: "Correo de prueba",
+        text: "Hola",
       });
 
       console.log("Correo enviado:", info);
     } catch (error) {
-      console.error("Error enviando correo:", error);
+      console.error("Error SMTP:", error);
     }
+
+    console.log("Después sendMail");
 
     const info = await transporter.sendMail({
       from: "UpTask <admin@uptask.com>",
@@ -38,8 +41,6 @@ export class AuthEmail {
   };
 
   static sendPasswordResetToken = async (user: IEmail) => {
-    console.log("email2?");
-
     try {
       const info = await transporter.sendMail({
         from: '"ReptileApp" <no-reply@reptileapp.com>',
