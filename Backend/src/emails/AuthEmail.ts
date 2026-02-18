@@ -1,4 +1,4 @@
-import { transporter } from "../config/nodemailer";
+import { Resend } from "resend";
 
 interface IEmail {
   email: string;
@@ -10,8 +10,9 @@ export class AuthEmail {
   static sendConfirmationEmail = async (user: IEmail) => {
     console.log("Antes sendMail");
 
+    const resend = new Resend(process.env.RESEND_API_KEY);
     try {
-      const info = await transporter.sendMail({
+      const info = await resend.emails.send({
         from: '"ReptileApp" <no-reply@reptileapp.com>',
         to: user.email,
         subject: "Test",
@@ -25,7 +26,7 @@ export class AuthEmail {
 
     console.log("Después sendMail");
 
-    const info = await transporter.sendMail({
+    const info = await resend.emails.send({
       from: "UpTask <admin@uptask.com>",
       to: user.email,
       subject: "Uptask - Confirma tu cuenta",
@@ -37,24 +38,12 @@ export class AuthEmail {
       
       `,
     });
-    console.log("Mensaje enviado", info.messageId);
+    console.log("Mensaje enviado", info);
   };
 
   static sendPasswordResetToken = async (user: IEmail) => {
-    try {
-      const info = await transporter.sendMail({
-        from: '"ReptileApp" <no-reply@reptileapp.com>',
-        to: user.email,
-        subject: "Test",
-        text: "Correo de prueba",
-      });
-
-      console.log("Correo enviado:", info);
-    } catch (error) {
-      console.error("Error enviando correo:", error);
-    }
-
-    const info = await transporter.sendMail({
+    const resend = new Resend(process.env.RESEND_API_KEY);
+    const info = await resend.emails.send({
       from: "UpTask <admin@uptask.com>",
       to: user.email,
       subject: "Uptask - Restablece tu password",
@@ -65,6 +54,6 @@ export class AuthEmail {
       
       `,
     });
-    console.log("Mensaje enviado", info.messageId);
+    console.log("Mensaje enviado", info);
   };
 }
