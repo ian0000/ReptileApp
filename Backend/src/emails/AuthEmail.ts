@@ -8,6 +8,7 @@ interface IEmail {
 
 export class AuthEmail {
   static sendConfirmationEmail = async (user: IEmail) => {
+    console.log("email?");
     try {
       const info = await transporter.sendMail({
         from: '"ReptileApp" <no-reply@reptileapp.com>',
@@ -37,6 +38,8 @@ export class AuthEmail {
   };
 
   static sendPasswordResetToken = async (user: IEmail) => {
+    console.log("email2?");
+
     try {
       const info = await transporter.sendMail({
         from: '"ReptileApp" <no-reply@reptileapp.com>',
