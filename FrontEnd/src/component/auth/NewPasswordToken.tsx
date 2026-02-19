@@ -28,6 +28,8 @@ export default function NewPasswordToken({
 
   const handleChange = (token: ConfirmToken["token"]) => {
     setToken(token);
+    console.log(token);
+
     if (token.length === 6) {
       handleComplete;
     }
