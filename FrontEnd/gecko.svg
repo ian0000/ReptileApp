@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256">
+  <!-- Fondo -->
+  <rect width="256" height="256" rx="64" fill="#111827"/>
+
+  <!-- Gecko -->
+  <g fill="none" stroke="#22c55e" stroke-width="16" stroke-linecap="round" stroke-linejoin="round">
+    
+    <!-- Cabeza -->
+    <circle cx="128" cy="72" r="28" fill="#22c55e" stroke="none"/>
+    
+    <!-- Cuerpo -->
+    <path d="M128 100 
+             C168 110 180 150 150 175
+             C135 188 128 200 128 210
+             C128 200 121 188 106 175
+             C76 150 88 110 128 100Z" 
+          fill="#22c55e" stroke="none"/>
+
+    <!-- Cola elegante -->
+    <path d="M128 175 
+             C90 190 70 225 110 230"/>
+
+    <!-- Patas -->
+    <path d="M80 135 L60 120"/>
+    <path d="M176 135 L196 120"/>
+    <path d="M102 170 L82 190"/>
+    <path d="M154 170 L174 190"/>
+  </g>
+</svg>
