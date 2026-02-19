@@ -27,7 +27,7 @@ export default function ConfirmAccountView() {
     setToken(value);
 
     // Auto validar cuando tenga 6
-    if (value.length === 6) {
+    if (value.length === 6 && !isPending) {
       mutate({ token: value });
     }
   };

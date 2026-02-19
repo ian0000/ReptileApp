@@ -30,14 +30,11 @@ export default function NewPasswordToken({
     setToken(token);
     console.log(token);
 
-    if (token.length === 6) {
-      handleComplete;
+    if (token.length === 6 && !isPending) {
+      mutate({ token });
     }
   };
 
-  const handleComplete = (token: ConfirmToken["token"]) => {
-    mutate({ token });
-  };
   return (
     <>
       <form className="space-y-8 p-10 rounded-2xl bg-white mt-10 shadow-lg">
