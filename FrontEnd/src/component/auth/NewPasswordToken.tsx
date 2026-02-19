@@ -15,7 +15,7 @@ export default function NewPasswordToken({
   setToken,
   setIsValidToken,
 }: NewPasswordTokenProps) {
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: validateToken,
     onError: (error) => {
       toast.error(error.message);
@@ -49,6 +49,7 @@ export default function NewPasswordToken({
           autoComplete="one-time-code"
           maxLength={6}
           value={token}
+          disabled={isPending}
           onChange={(e) => handleChange(e.target.value)}
           className="
             mx-auto block w-48 text-center text-2xl tracking-widest
@@ -58,6 +59,9 @@ export default function NewPasswordToken({
           "
           placeholder="••••••"
         />
+        {isPending && (
+          <p className="text-center text-sm text-gray-500 animate-pulse">Validando código…</p>
+        )}
       </form>
 
       <nav className="mt-10 flex flex-col space-y-4">

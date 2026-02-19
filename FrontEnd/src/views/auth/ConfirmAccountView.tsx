@@ -8,7 +8,7 @@ export default function ConfirmAccountView() {
   const [token, setToken] = useState("");
   const navigate = useNavigate();
 
-  const { mutate } = useMutation({
+  const { mutate, isPending } = useMutation({
     mutationFn: confirmAccount,
     onError: (error: Error) => {
       toast.error(error.message ?? "Código inválido");
@@ -50,6 +50,7 @@ export default function ConfirmAccountView() {
           maxLength={6}
           value={token}
           onChange={(e) => handleChange(e.target.value)}
+          disabled={isPending}
           className="
             mx-auto block w-48 text-center text-2xl tracking-widest
             rounded-xl border border-gray-300 px-4 py-3
@@ -58,6 +59,10 @@ export default function ConfirmAccountView() {
           "
           placeholder="••••••"
         />
+
+        {isPending && (
+          <p className="text-center text-sm text-gray-500 animate-pulse">Validando código…</p>
+        )}
       </form>
 
       <nav className="mt-10 flex flex-col space-y-4">
