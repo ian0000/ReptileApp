@@ -13,6 +13,13 @@ type LogPesajeFormModalProps = {
   onClose: () => void;
 };
 
+const initialValues: LogPesajeFormData = {
+  peso: 1,
+  unidad: undefined,
+  contexto: undefined,
+  observaciones: "",
+};
+
 export default function LogPesajeFormModal({ reptilId, logId, onClose }: LogPesajeFormModalProps) {
   const isEdit = Boolean(logId);
   const { data: log, isLoading } = useLogPesaje(reptilId, logId, {
@@ -22,12 +29,6 @@ export default function LogPesajeFormModal({ reptilId, logId, onClose }: LogPesa
   const createMutation = useCreateLogPesaje(reptilId, onClose);
   const updateMutation = useUpdateLogPesaje(reptilId, logId!, onClose);
 
-  const initialValues: LogPesajeFormData = {
-    peso: 1,
-    unidad: undefined,
-    contexto: undefined,
-    observaciones: "",
-  };
   const {
     register,
     handleSubmit,

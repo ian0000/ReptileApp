@@ -14,8 +14,8 @@ export function useUpdateLogPesaje(
     mutationFn: (formData: LogPesajeFormData) =>
       updateLogPesajeData({ reptilId, logPesajeId, formData }),
     onSuccess: (message, formData) => {
-      queryClient.setQueryData(["logPesaje", reptilId, logPesajeId], (oldData: any) =>
-        oldData ? { ...oldData, ...formData } : formData,
+      queryClient.setQueryData(["logPesaje", reptilId, logPesajeId], (oldData: unknown) =>
+        oldData && typeof oldData === "object" ? { ...oldData, ...formData } : formData,
       );
       queryClient.invalidateQueries({ queryKey: ["logPesajes", reptilId] });
       toast.success(message);

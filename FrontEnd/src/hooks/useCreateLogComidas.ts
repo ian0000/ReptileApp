@@ -19,10 +19,13 @@ export function useCreateLogComidas(reptilId: ReptilId, onSuccess?: () => void) 
       }
 
       // 2️⃣ Axios / Fetch con ZodError serializado
-      const data = (error as any)?.response?.data;
+      const data =
+        typeof error === "object" && error !== null && "response" in error
+          ? (error as { response?: { data?: unknown } }).response?.data
+          : undefined;
 
       if (isZodError(data)) {
-        data.issues.forEach((issue: any) => {
+        data.issues.forEach((issue) => {
           toast.error(`${issue.path.join(".")}: ${issue.message}`);
         });
         return;

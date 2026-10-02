@@ -1,16 +1,12 @@
+import "dotenv/config";
 import express from "express";
-import dotenv from "dotenv";
 import cors from "cors";
-import { connectDB } from "./config/db";
 import { corsConfig } from "./config/cors";
 import morgan from "morgan";
 import swaggerUi from "swagger-ui-express";
 import reptileRouter from "./routes/reptileRouter";
 import authRouter from "./routes/authRouter";
 import { swaggerDocument } from "./swagger";
-
-dotenv.config();
-connectDB();
 
 const app = express();
 
@@ -24,6 +20,10 @@ app.get("/api-docs.json", (req, res) => {
   res.send(swaggerDocument);
 });
 app.use(cors(corsConfig));
+
+app.get("/health", (_req, res) => {
+  res.status(200).json({ status: "ok" });
+});
 
 app.use("/api/auth", authRouter);
 app.use("/api/reptiles", reptileRouter);

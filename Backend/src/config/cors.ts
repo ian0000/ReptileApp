@@ -1,14 +1,17 @@
 import { CorsOptions } from "cors";
 
+const getConfiguredOrigins = () =>
+  [process.env.FRONTEND_URL, ...(process.env.CORS_ORIGINS ?? "").split(",")]
+    .map((origin) => origin?.trim())
+    .filter((origin): origin is string => Boolean(origin));
+
 export const corsConfig: CorsOptions = {
   origin: function (origin, callback) {
-    const allowedOrigin = process.env.FRONTEND_URL;
-
     // Permitir requests sin origin (Postman, Railway health check)
     if (!origin) {
       return callback(null, true);
     }
-    if (origin === allowedOrigin || origin.endsWith(".vercel.app")) {
+    if (getConfiguredOrigins().includes(origin) || origin.endsWith(".vercel.app")) {
       return callback(null, true);
     }
 

@@ -13,6 +13,18 @@ type LogComidaFormModalProps = {
   onClose: () => void;
 };
 
+const initialValues: LogComidasFormData = {
+  cantidad: 1,
+  unidad: undefined,
+  tipoAlimento: "otro",
+  suplemento: undefined,
+  metodo: undefined,
+  observaciones: "",
+  excreto: false,
+  apetito: undefined,
+  nextFeeding: 1,
+};
+
 export default function LogComidaFormModal({ reptilId, logId, onClose }: LogComidaFormModalProps) {
   const isEdit = Boolean(logId);
   const { data: log, isLoading } = useLogComida(reptilId, logId, {
@@ -22,17 +34,6 @@ export default function LogComidaFormModal({ reptilId, logId, onClose }: LogComi
   const createMutation = useCreateLogComidas(reptilId, onClose);
   const updateMutation = useUpdateLogComidas(reptilId, logId!, onClose);
 
-  const initialValues: LogComidasFormData = {
-    cantidad: 1,
-    unidad: undefined,
-    tipoAlimento: "otro",
-    suplemento: undefined,
-    metodo: undefined,
-    observaciones: "",
-    excreto: false,
-    apetito: undefined,
-    nextFeeding: 1,
-  };
   const {
     register,
     handleSubmit,

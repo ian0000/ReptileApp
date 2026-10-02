@@ -9,8 +9,8 @@ export function useUpdateReptil(reptilId: ReptilId, onSuccess?: () => void) {
   return useMutation({
     mutationFn: (formData: ReptilFormData) => updateReptileData({ reptilId, formData }),
     onSuccess: (message, formData) => {
-      queryClient.setQueryData(["reptil", reptilId], (oldData: any) =>
-        oldData ? { ...oldData, ...formData } : formData,
+      queryClient.setQueryData(["reptil", reptilId], (oldData: unknown) =>
+        oldData && typeof oldData === "object" ? { ...oldData, ...formData } : formData,
       );
 
       queryClient.invalidateQueries({ queryKey: ["reptiles"] });

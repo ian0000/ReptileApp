@@ -9,8 +9,8 @@ export function useUpdateNote(reptilId: ReptilId, noteId: NoteId, onSuccess?: ()
   return useMutation({
     mutationFn: (formData: NoteFormData) => updateNoteData({ reptilId, noteId, formData }),
     onSuccess: (message, formData) => {
-      queryClient.setQueryData(["note", reptilId, noteId], (oldData: any) =>
-        oldData ? { ...oldData, ...formData } : formData,
+      queryClient.setQueryData(["note", reptilId, noteId], (oldData: unknown) =>
+        oldData && typeof oldData === "object" ? { ...oldData, ...formData } : formData,
       );
       queryClient.invalidateQueries({ queryKey: ["notes", reptilId] });
       toast.success(message);

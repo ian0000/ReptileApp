@@ -1,5 +1,7 @@
 import swaggerJsdoc from "swagger-jsdoc";
 
+const apiPublicUrl = process.env.API_PUBLIC_URL || "http://localhost:4000";
+
 export const swaggerDocument = swaggerJsdoc({
   definition: {
     openapi: "3.0.0",
@@ -10,7 +12,7 @@ export const swaggerDocument = swaggerJsdoc({
     },
     servers: [
       {
-        url: "http://localhost:4000",
+        url: apiPublicUrl,
       },
     ],
   },
