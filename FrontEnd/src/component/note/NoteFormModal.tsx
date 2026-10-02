@@ -13,6 +13,16 @@ type NoteFormModalProps = {
   onClose: () => void;
 };
 
+const initialValues: NoteFormData = {
+  name: "",
+  description: "",
+  type: undefined,
+  tags: undefined,
+  weight: undefined,
+  humidity: undefined,
+  temp: undefined,
+};
+
 export default function NoteFormModal({ reptilId, noteId, onClose }: NoteFormModalProps) {
   const isEdit = Boolean(noteId);
   const { data: note, isLoading } = useNote(reptilId, noteId, {
@@ -22,15 +32,6 @@ export default function NoteFormModal({ reptilId, noteId, onClose }: NoteFormMod
   const createMutation = useCreateNote(reptilId, onClose);
   const updateMutation = useUpdateNote(reptilId, noteId!, onClose);
 
-  const initialValues: NoteFormData = {
-    name: "",
-    description: "",
-    type: undefined,
-    tags: undefined,
-    weight: undefined,
-    humidity: undefined,
-    temp: undefined,
-  };
   const {
     register,
     handleSubmit,

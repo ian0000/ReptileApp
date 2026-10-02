@@ -45,7 +45,7 @@ export function isZodError(error: unknown): error is { issues: ZodIssue[] } {
     typeof error === "object" &&
     error !== null &&
     "issues" in error &&
-    Array.isArray((error as any).issues)
+    Array.isArray((error as { issues?: unknown }).issues)
   );
 }
 export const numberOptional = (schema: z.ZodNumber) =>

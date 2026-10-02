@@ -15,8 +15,8 @@ export function useUpdateLogComidas(
     mutationFn: (formData: LogComidasFormData) =>
       updateLogComidasData({ reptilId, logComidaId, formData }),
     onSuccess: (message, formData) => {
-      queryClient.setQueryData(["logComida", reptilId, logComidaId], (oldData: any) =>
-        oldData ? { ...oldData, ...formData } : formData,
+      queryClient.setQueryData(["logComida", reptilId, logComidaId], (oldData: unknown) =>
+        oldData && typeof oldData === "object" ? { ...oldData, ...formData } : formData,
       );
       queryClient.invalidateQueries({ queryKey: ["logComidas", reptilId] });
       toast.success(message);
@@ -32,10 +32,13 @@ export function useUpdateLogComidas(
       }
 
       // 2️⃣ Axios / Fetch con ZodError serializado
-      const data = (error as any)?.response?.data;
+      const data =
+        typeof error === "object" && error !== null && "response" in error
+          ? (error as { response?: { data?: unknown } }).response?.data
+          : undefined;
 
       if (isZodError(data)) {
-        data.issues.forEach((issue: any) => {
+        data.issues.forEach((issue) => {
           toast.error(`${issue.path.join(".")}: ${issue.message}`);
         });
         return;

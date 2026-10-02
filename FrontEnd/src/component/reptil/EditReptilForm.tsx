@@ -23,14 +23,14 @@ export const EditReptileForm = ({ data, reptilId }: EditReptileFormProps) => {
   } = useForm<ReptilFormData>({
     defaultValues: {
       ...data,
-      birthDate: formatDateForInput(data.birthDate) as any,
+      birthDate: formatDateForInput(data.birthDate),
     },
   });
 
   useEffect(() => {
     reset({
       ...data,
-      birthDate: formatDateForInput(data.birthDate) as any,
+      birthDate: formatDateForInput(data.birthDate),
     });
   }, [data, reset]);
 

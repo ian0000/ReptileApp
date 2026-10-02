@@ -11,6 +11,12 @@ export default function EditProjectView() {
 
   const { data, isError, isLoading } = useReptil(reptilId);
 
+  useEffect(() => {
+    if (isError) {
+      navigate("/404", { replace: true });
+    }
+  }, [isError, navigate]);
+
   if (isLoading) {
     return (
       <div className="min-h-[70vh] flex items-center justify-center">
@@ -18,12 +24,6 @@ export default function EditProjectView() {
       </div>
     );
   }
-
-  useEffect(() => {
-    if (isError) {
-      navigate("/404", { replace: true });
-    }
-  }, [isError, navigate]);
 
   if (!data) {
     return null;
