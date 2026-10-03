@@ -65,6 +65,8 @@ La arquitectura actual, configuración, CI/CD, variables y operación están en 
 - Base de datos: MongoDB Atlas.
 - Correo: Resend.
 
+El proyecto Vercel `reptile-app`, el DNS legacy `reptiles.ian-k.dev` y el Worker `apireptiles` fueron retirados definitivamente. El registro de cierre y las comprobaciones están en [docs/deployment.md](docs/deployment.md).
+
 ## Comandos disponibles
 
 | Carpeta | Comando | Acción |
