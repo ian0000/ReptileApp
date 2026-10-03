@@ -56,14 +56,14 @@ Necesitas Node.js 22, npm, una base MongoDB y configuración de correo para prob
 
 La API expone `/api/auth`, `/api/reptiles`, `/api-docs` y `/api-docs.json`. La dirección del frontend aparece en la salida de Vite.
 
-## Despliegue objetivo
+## Producción
 
-La preparación para Cloudflare Pages y Railway, las variables requeridas, los registros DNS pendientes, el plan de rollback y el checklist de producción están en [docs/deployment.md](docs/deployment.md).
+La arquitectura actual, configuración, CI/CD, variables y operación están en [docs/deployment.md](docs/deployment.md).
 
-- Frontend: `https://reptileapp.ian-k.dev`
-- Backend: `https://api-reptileapp.ian-k.dev`
-- Base de datos: MongoDB Atlas existente
-- Correo: Resend existente
+- Frontend: [reptileapp.ian-k.dev](https://reptileapp.ian-k.dev), alojado en Cloudflare Pages.
+- Backend: Railway, con URL base `https://api-reptileapp.ian-k.dev`. [Documentación API](https://api-reptileapp.ian-k.dev/api-docs).
+- Base de datos: MongoDB Atlas.
+- Correo: Resend.
 
 ## Comandos disponibles
 
