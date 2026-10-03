@@ -56,7 +56,7 @@ La SPA utiliza `BrowserRouter`. Pages sirve el fallback SPA al no existir un `40
 
 `Backend/railway.json` registra build, start, healthcheck y política de reinicio. El proceso conecta a MongoDB antes de escuchar; Railway suministra el puerto. `GET /health` es público y devuelve `{"status":"ok"}`.
 
-El cierre aplicó únicamente la variable CORS y generó el deployment `55310235-6914-408f-82ce-53ca88576787`, ACTIVE, con conexión MongoDB y healthcheck aprobados. Conserva el código de `main` anterior al merge de esta rama.
+La fase anterior aplicó la variable CORS y generó el deployment `55310235-6914-408f-82ce-53ca88576787`. Después de la fusión manual del PR #2 a `main` (`9087ba4`), Railway desplegó `9edc77a9-6ea1-4acc-9def-110da87b360e`, ACTIVE. La verificación final confirmó conexión MongoDB y healthcheck aprobados. La retirada definitiva de legacy no modificó Railway.
 
 Configuración pública final:
 
@@ -84,9 +84,9 @@ La allowlist final contiene únicamente:
 
 Las solicitudes sin `Origin`, como los healthchecks, siguen permitidas. Se conserva `credentials: true`. Los demás orígenes son rechazados; no se autoriza automáticamente un sufijo de proveedor ni cualquier preview de Pages.
 
-**Estado del cierre:** el código de esta rama elimina la excepción heredada de Vercel. Su retirada efectiva de producción requiere PR manual, merge a `main`, auto-deploy de Railway y comprobación CORS posterior. Cambiar solamente la variable de Railway no cambia esa lógica del código desplegado.
+**Estado del cierre:** la excepción heredada que autorizaba cualquier origen `.vercel.app` ya fue eliminada del código y de producción mediante el merge manual anterior y el auto-deploy de Railway.
 
-La comprobación de producción después del cambio de variable permitió los dos orígenes nuevos (OPTIONS 204), rechazó el dominio legacy (HTTP 500 sin `Access-Control-Allow-Origin`) y todavía permitió un preview ficticio de Vercel. La prueba local del código de esta rama rechazó también ese preview y un origen Pages no configurado; permitió ambos orígenes exactos y solicitudes sin `Origin`.
+La comprobación final de producción permitió los dos orígenes nuevos (OPTIONS 204, origen exacto y `credentials: true`) y rechazó el dominio legacy, un preview ficticio de Vercel y un origen Pages no configurado (HTTP 500 sin `Access-Control-Allow-Origin`). La prueba local del código permitió ambos orígenes exactos y solicitudes sin `Origin`, y rechazó los tres orígenes ajenos.
 
 ## DNS y dominios
 
@@ -120,14 +120,18 @@ Ante un fallo, recuperar una versión anterior válida o corregir configuración
 
 ## Infraestructura legacy: registro histórico del cierre
 
-Las siguientes referencias son históricas, no configuración activa del frontend nuevo:
+Las tres eliminaciones autorizadas expresamente se completaron el 2 de octubre de 2026. Las siguientes referencias son históricas, no configuración activa:
 
-- Vercel `reptile-app`: pausado y Git desconectado; eliminación definitiva pendiente de confirmación final.
-- `reptiles.ian-k.dev`: CNAME legacy identificado; retirada pendiente de confirmación final.
-- Worker Cloudflare `apireptiles`: sin Git, URLs, dominios, rutas ni bindings; eliminación pendiente de confirmación final.
+- Vercel `reptile-app` (`prj_Bhu7qdANhkNMswHbRsiuzRerFphb`): eliminado definitivamente. Antes de eliminarlo estaba pausado y sin Git; dejó de aparecer en el inventario. `reptile-app-eight.vercel.app` devuelve HTTP 404 y el último alias de deployment devuelve HTTP 410.
+- `reptiles.ian-k.dev`: eliminado únicamente su CNAME hacia Vercel. El registro exacto ya no aparece en Cloudflare y la resolución DNS devuelve `ENOTFOUND`. Los TXT de `_vercel.ian-k.dev` y los demás registros se conservaron.
+- Worker Cloudflare `apireptiles`: eliminado definitivamente; no tenía Git, URLs activas, dominios, rutas ni bindings. El inventario conserva los tres proyectos Pages existentes y ya no contiene ese Worker; su URL workers.dev devuelve HTTP 404.
 - Backend Railway anterior `iankreptiles-production.up.railway.app`: no disponible, HTTP 404 y `Application not found`, comprobado durante el cierre.
 
 Se retira `FrontEnd/vercel.json`, configuración obsoleta del proveedor anterior. No hay instrucciones de rollback hacia esos recursos.
+
+Después de las eliminaciones se verificaron HTTP 200 en el frontend principal, fallback Pages, healthcheck del backend y fallback Railway, Swagger y OpenAPI. `ian-k.dev` responde HTTP 200; `www.ian-k.dev` mantiene HTTP 301 hacia el portfolio y termina en HTTP 200. No se modificaron Pages, Railway, MongoDB Atlas, Resend, VZLegal ni otros recursos durante estas tres eliminaciones.
+
+Los quality gates del cierre se repitieron: `npm ci` y `npm run build` en Backend; `npm ci`, `npm run build` y `npm run lint` en FrontEnd; prueba de comportamiento CORS local y `git diff --check`. Todos terminaron en PASS. Este commit completa la documentación en `chore/deployment-closeout`; no crea otro PR ni realiza merge.
 
 ## Seguimientos no bloqueantes
 
