@@ -3,83 +3,46 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import ReptilForm from "../../component/reptil/ReptilForm";
 import { useCreateReptil } from "../../hooks/useCreateReptil";
-
+import { FormNotice, SubmitButton } from "../../design-system/forms";
+import "../../component/reptil/reptiles.css";
+import { recordError } from "../../component/note/recordError";
 export default function CreateReptilView() {
   const navigate = useNavigate();
-
-  const initialValues: ReptilFormData = {
-    name: "",
-    birthDate: new Date().toString(),
-    description: "",
-    genre: 1,
-  };
-
-  const { mutate, isPending } = useCreateReptil(() => {
-    navigate("/");
-  });
-
+  const mutation = useCreateReptil(() => navigate("/"));
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<ReptilFormData>({
-    defaultValues: initialValues,
+    defaultValues: { name: "", birthDate: "", description: "", genre: 1 },
   });
-
-  const handleForm = (formData: ReptilFormData) => {
-    mutate(formData);
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-emerald-50 via-white to-sky-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-2xl">
-        {/* Back */}
-        <Link
-          to="/"
-          className="inline-flex items-center gap-2 text-sm font-semibold
-                     text-blue-600 hover:text-blue-800 mb-6"
-        >
-          ← Volver
-        </Link>
-
-        {/* Card */}
-        <div
-          className="relative bg-white rounded-3xl shadow-xl
-                     p-10 overflow-hidden"
-        >
-          {/* Decorative glow */}
-          <div className="absolute -top-24 -right-24 w-64 h-64 bg-emerald-400/20 rounded-full blur-3xl" />
-          <div className="absolute -bottom-24 -left-24 w-64 h-64 bg-sky-400/20 rounded-full blur-3xl" />
-
-          {/* Header */}
-          <div className="relative mb-8">
-            <h1 className="text-4xl font-extrabold text-gray-900">Nuevo Reptil 🦎</h1>
-            <p className="text-gray-500 mt-2 text-lg">
-              Registra un nuevo integrante en tu colección
-            </p>
-          </div>
-
-          {/* Form */}
-          <form onSubmit={handleSubmit(handleForm)} noValidate className="relative space-y-6">
-            <ReptilForm register={register} errors={errors} />
-
-            {/* CTA */}
-            <button
-              type="submit"
-              disabled={isPending}
-              className="w-full py-4 rounded-xl
-                         bg-gradient-to-r from-emerald-500 to-sky-500
-                         hover:from-emerald-600 hover:to-sky-600
-                         disabled:opacity-60 disabled:cursor-not-allowed
-                         text-white font-extrabold text-lg
-                         tracking-wide shadow-lg
-                         transition-all transform hover:-translate-y-0.5"
-            >
-              {isPending ? "Guardando..." : "Crear Reptil"}
-            </button>
-          </form>
+    <section className="ra-reptile-editor">
+      <Link className="ra-reptile-back" to="/">
+        Volver a mis reptiles
+      </Link>
+      <h1>Añadir reptil</h1>
+      <p>
+        Empieza con sus datos básicos. Los registros de cuidado vendrán después.
+      </p>
+      <form
+        className="ra-form ra-reptile-form"
+        noValidate
+        onSubmit={handleSubmit((data) => {
+          if (!mutation.isPending) mutation.mutate(data);
+        })}
+      >
+        <fieldset disabled={mutation.isPending}>
+          <ReptilForm register={register} errors={errors} />
+        </fieldset>
+        {Boolean(mutation.error) && (
+          <FormNotice tone="error">{recordError(mutation.error)}</FormNotice>
+        )}
+        <div className="ra-form-nav">
+          <SubmitButton pending={mutation.isPending}>Crear ficha</SubmitButton>
+          <Link to="/">Cancelar</Link>
         </div>
-      </div>
-    </div>
+      </form>
+    </section>
   );
 }

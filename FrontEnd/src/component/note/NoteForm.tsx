@@ -1,146 +1,144 @@
+﻿import { useId } from "react";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import type { NoteFormData } from "../../types";
 import { schemas } from "../../api/client";
-
-type NoteFormProps = {
+import { FormField } from "../../design-system/forms";
+type Props = {
   register: UseFormRegister<NoteFormData>;
   errors: FieldErrors<NoteFormData>;
 };
-
-const TAG_OPTIONS = schemas.TagsNota.options;
-const TYPE_OPTIONS = schemas.TipoNota.options;
-export default function NoteForm({ register, errors }: NoteFormProps) {
+export default function NoteForm({ register, errors }: Props) {
+  const prefix = useId();
   return (
-    <div className="space-y-6">
-      {/* Título */}
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-1">Título</label>
+    <div className="ra-history-fields">
+      <FormField
+        id={prefix + "-name"}
+        label="Título"
+        error={errors.name?.message}
+      >
         <input
+          id={prefix + "-name"}
+          className="ra-input"
           type="text"
+          aria-invalid={!!errors.name}
+          aria-describedby={errors.name ? prefix + "-name-error" : undefined}
           {...register("name", { required: "El nombre es obligatorio" })}
-          className="w-full rounded-xl border border-gray-200
-                   px-4 py-2.5 text-gray-800
-                   focus:outline-none focus:ring-2
-                   focus:ring-emerald-500/30
-                   focus:border-emerald-500
-                   transition"
         />
-        {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>}
-      </div>
-
-      {/* Descripción */}
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-1">Descripción</label>
+      </FormField>
+      <FormField
+        id={prefix + "-description"}
+        label="Descripción"
+        error={errors.description?.message}
+      >
         <textarea
-          {...register("description")}
+          id={prefix + "-description"}
+          className="ra-input"
           rows={3}
-          className="w-full rounded-xl border border-gray-200
-                   px-4 py-2.5 text-gray-800
-                   focus:outline-none focus:ring-2
-                   focus:ring-emerald-500/30
-                   focus:border-emerald-500
-                   transition resize-none"
+          aria-invalid={!!errors.description}
+          aria-describedby={
+            errors.description ? prefix + "-description-error" : undefined
+          }
+          {...register("description")}
         />
-      </div>
-
-      {/* Grid 2 columnas */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        {/* Tipo */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Tipo</label>
+      </FormField>
+      <div className="ra-history-form-grid">
+        <FormField
+          id={prefix + "-type"}
+          label="Tipo"
+          error={errors.type?.message}
+        >
           <select
-            {...register("type")}
-            className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800
-                     bg-white
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
+            id={prefix + "-type"}
+            className="ra-input"
+            aria-invalid={!!errors.type}
+            aria-describedby={errors.type ? prefix + "-type-error" : undefined}
+            {...register("type", {
+              setValueAs: (value) => (value === "" ? undefined : value),
+            })}
           >
             <option value="">Seleccionar tipo</option>
-            {TYPE_OPTIONS.map((type) => (
-              <option key={type} value={type}>
-                {type}
+            {schemas.TipoNota.options.map((option) => (
+              <option key={option} value={option}>
+                {option}
               </option>
             ))}
           </select>
-        </div>
-
-        {/* Tag */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Tag</label>
+        </FormField>
+        <FormField
+          id={prefix + "-tags"}
+          label="Etiqueta"
+          error={errors.tags?.message}
+        >
           <select
-            {...register("tags")}
-            className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800
-                     bg-white
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
+            id={prefix + "-tags"}
+            className="ra-input"
+            aria-invalid={!!errors.tags}
+            aria-describedby={errors.tags ? prefix + "-tags-error" : undefined}
+            {...register("tags", {
+              setValueAs: (value) => (value === "" ? undefined : value),
+            })}
           >
-            <option value="">Sin tag</option>
-            {TAG_OPTIONS.map((tag) => (
-              <option key={tag} value={tag}>
-                {tag}
+            <option value="">Sin etiqueta</option>
+            {schemas.TagsNota.options.map((option) => (
+              <option key={option} value={option}>
+                {option}
               </option>
             ))}
           </select>
-        </div>
+        </FormField>
       </div>
-
-      {/* Grid 3 columnas */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        {/* Peso */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Peso (opcional)</label>
+      <div className="ra-history-form-grid">
+        <FormField
+          id={prefix + "-weight"}
+          label="Peso (opcional)"
+          error={errors.weight?.message}
+        >
           <input
+            id={prefix + "-weight"}
+            className="ra-input"
             type="number"
-            step=".1"
+            aria-invalid={!!errors.weight}
+            aria-describedby={
+              errors.weight ? prefix + "-weight-error" : undefined
+            }
             {...register("weight", { valueAsNumber: true })}
-            className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
+            step=".1"
           />
-        </div>
-
-        {/* Temperatura */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Temperatura (°C)</label>
+        </FormField>
+        <FormField
+          id={prefix + "-temp"}
+          label="Temperatura (°C)"
+          error={errors.temp?.message}
+        >
           <input
+            id={prefix + "-temp"}
+            className="ra-input"
             type="number"
+            aria-invalid={!!errors.temp}
+            aria-describedby={errors.temp ? prefix + "-temp-error" : undefined}
+            {...register("temp", { valueAsNumber: true })}
             step="1"
             max={60}
-            {...register("temp", { valueAsNumber: true })}
-            className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
           />
-        </div>
-
-        {/* Humedad */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Humedad (%)</label>
+        </FormField>
+        <FormField
+          id={prefix + "-humidity"}
+          label="Humedad (%)"
+          error={errors.humidity?.message}
+        >
           <input
+            id={prefix + "-humidity"}
+            className="ra-input"
             type="number"
+            aria-invalid={!!errors.humidity}
+            aria-describedby={
+              errors.humidity ? prefix + "-humidity-error" : undefined
+            }
+            {...register("humidity", { valueAsNumber: true })}
             step="1"
             max={100}
-            {...register("humidity", { valueAsNumber: true })}
-            className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
           />
-        </div>
+        </FormField>
       </div>
     </div>
   );

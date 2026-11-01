@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+﻿import { useQuery } from "@tanstack/react-query";
 import type { LogPesajeId, ReptilId } from "../api/ids";
 import { getLogPesajeById } from "../api/LogPesajeApi";
 
@@ -12,7 +12,7 @@ export function useLogPesaje(
   options?: UseLogPesajeOptions,
 ) {
   return useQuery({
-    queryKey: ["logPesaje", logPesajeId],
+    queryKey: ["logPesaje", reptilId, logPesajeId],
     queryFn: () => getLogPesajeById(reptilId!, logPesajeId!),
     enabled: options?.enabled ?? true,
     retry: false,

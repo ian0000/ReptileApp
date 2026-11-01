@@ -1,197 +1,194 @@
+﻿import { useId } from "react";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import type { LogComidasFormData } from "../../types";
 import { schemas } from "../../api/client";
-
-type LogComidaFormProps = {
+import { FormField } from "../../design-system/forms";
+type Props = {
   register: UseFormRegister<LogComidasFormData>;
   errors: FieldErrors<LogComidasFormData>;
 };
-
-const UNIDAD_OPTIONS = schemas.Unidad.options;
-const TIPO_ALIMENTO_OPTIONS = schemas.TipoAlimento.options;
-const METODO_OPTIONS = schemas.MetodoAlimentacion.options;
-
-export default function LogComidaForm({ register, errors }: LogComidaFormProps) {
+export default function LogComidaForm({ register, errors }: Props) {
+  const prefix = useId();
   return (
-    <div className="space-y-6">
-      {/* Cantidad */}
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-1">Cantidad</label>
+    <div className="ra-history-fields">
+      <FormField
+        id={prefix + "-cantidad"}
+        label="Cantidad"
+        error={errors.cantidad?.message}
+      >
         <input
+          id={prefix + "-cantidad"}
+          className="ra-input"
           type="number"
-          step="0.01"
+          aria-invalid={!!errors.cantidad}
+          aria-describedby={
+            errors.cantidad ? prefix + "-cantidad-error" : undefined
+          }
           {...register("cantidad", {
             required: "La cantidad es obligatoria",
             valueAsNumber: true,
           })}
-          className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
+          step="0.01"
         />
-        {errors.cantidad && <p className="text-red-500 text-sm mt-1">{errors.cantidad.message}</p>}
-      </div>
-
-      {/* Grid 2 columnas */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        {/* Unidad */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Unidad</label>
+      </FormField>
+      <div className="ra-history-form-grid">
+        <FormField
+          id={prefix + "-unidad"}
+          label="Unidad"
+          error={errors.unidad?.message}
+        >
           <select
-            {...register("unidad")}
-            className="w-full rounded-xl border border-gray-200
-                       px-4 py-2.5 text-gray-800 bg-white
-                       focus:outline-none focus:ring-2
-                       focus:ring-emerald-500/30
-                       focus:border-emerald-500
-                       transition"
+            id={prefix + "-unidad"}
+            className="ra-input"
+            aria-invalid={!!errors.unidad}
+            aria-describedby={
+              errors.unidad ? prefix + "-unidad-error" : undefined
+            }
+            {...register("unidad", {
+              setValueAs: (value) => (value === "" ? undefined : value),
+            })}
           >
             <option value="">Sin unidad</option>
-            {UNIDAD_OPTIONS.map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
+            {schemas.Unidad.options.map((option) => (
+              <option key={option} value={option}>
+                {option}
               </option>
             ))}
           </select>
-        </div>
-
-        {/* Tipo de alimento */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Tipo de alimento</label>
+        </FormField>
+        <FormField
+          id={prefix + "-tipoAlimento"}
+          label="Tipo de alimento"
+          error={errors.tipoAlimento?.message}
+        >
           <select
+            id={prefix + "-tipoAlimento"}
+            className="ra-input"
+            aria-invalid={!!errors.tipoAlimento}
+            aria-describedby={
+              errors.tipoAlimento ? prefix + "-tipoAlimento-error" : undefined
+            }
             {...register("tipoAlimento", {
+              setValueAs: (value) => (value === "" ? undefined : value),
               required: "Selecciona el alimento",
             })}
-            className="w-full rounded-xl border border-gray-200
-                       px-4 py-2.5 text-gray-800 bg-white
-                       focus:outline-none focus:ring-2
-                       focus:ring-emerald-500/30
-                       focus:border-emerald-500
-                       transition"
           >
-            {TIPO_ALIMENTO_OPTIONS.map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
+            {schemas.TipoAlimento.options.map((option) => (
+              <option key={option} value={option}>
+                {option}
               </option>
             ))}
           </select>
-          {errors.tipoAlimento && (
-            <p className="text-red-500 text-sm mt-1">{errors.tipoAlimento.message}</p>
-          )}
-        </div>
-      </div>
-
-      {/* Grid 3 columnas */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-        {/* Método */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Método</label>
+        </FormField>
+        <FormField
+          id={prefix + "-metodo"}
+          label="Método"
+          error={errors.metodo?.message}
+        >
           <select
-            {...register("metodo")}
-            className="w-full rounded-xl border border-gray-200
-                       px-4 py-2.5 text-gray-800 bg-white
-                       focus:outline-none focus:ring-2
-                       focus:ring-emerald-500/30
-                       focus:border-emerald-500
-                       transition"
+            id={prefix + "-metodo"}
+            className="ra-input"
+            aria-invalid={!!errors.metodo}
+            aria-describedby={
+              errors.metodo ? prefix + "-metodo-error" : undefined
+            }
+            {...register("metodo", {
+              setValueAs: (value) => (value === "" ? undefined : value),
+            })}
           >
             <option value="">Sin método</option>
-            {METODO_OPTIONS.map((opt) => (
-              <option key={opt} value={opt}>
-                {opt}
+            {schemas.MetodoAlimentacion.options.map((option) => (
+              <option key={option} value={option}>
+                {option}
               </option>
             ))}
           </select>
-        </div>
-
-        {/* Apetito */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Apetito</label>
+        </FormField>
+        <FormField
+          id={prefix + "-apetito"}
+          label="Apetito"
+          error={errors.apetito?.message}
+        >
           <select
+            id={prefix + "-apetito"}
+            className="ra-input"
+            aria-invalid={!!errors.apetito}
+            aria-describedby={
+              errors.apetito ? prefix + "-apetito-error" : undefined
+            }
             {...register("apetito", {
-              setValueAs: (v) => (v === "" ? undefined : Number(v)),
+              setValueAs: (value) => (value === "" ? undefined : Number(value)),
             })}
-            className="w-full rounded-xl border border-gray-200
-             px-4 py-2.5 text-gray-800 bg-white
-             focus:outline-none focus:ring-2
-             focus:ring-emerald-500/30
-             focus:border-emerald-500
-             transition"
           >
-            <option value={0}>No especificado</option>
-            <option value={1}>⭐ Muy bajo</option>
-            <option value={2}>⭐⭐ Bajo</option>
-            <option value={3}>⭐⭐⭐ Normal</option>
-            <option value={4}>⭐⭐⭐⭐ Bueno</option>
-            <option value={5}>⭐⭐⭐⭐⭐ Excelente</option>
+            <option value="">No especificado</option>
+            <option value={1}>1 · Muy bajo</option>
+            <option value={2}>2 · Bajo</option>
+            <option value={3}>3 · Normal</option>
+            <option value={4}>4 · Bueno</option>
+            <option value={5}>5 · Excelente</option>
           </select>
-        </div>
-
-        {/* Excretó */}
-        <div className="flex items-center gap-3 mt-7">
-          <input
-            type="checkbox"
-            {...register("excreto")}
-            className="h-4 w-4 rounded border-gray-300
-                       text-emerald-600 focus:ring-emerald-500"
-          />
-          <label className="text-sm font-semibold text-gray-700">Excretó</label>
-        </div>
+        </FormField>
       </div>
-
-      {/* Suplemento */}
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-1">Suplemento</label>
+      <label className="ra-history-check" htmlFor={prefix + "-excreto"}>
         <input
-          type="text"
-          {...register("suplemento")}
-          className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
-          placeholder="Ej: calcio, multivitamínico"
+          id={prefix + "-excreto"}
+          type="checkbox"
+          {...register("excreto")}
         />
-      </div>
-      {/* Próxima comida */}
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-1">
-          Próxima comida (días)
-        </label>
+        Excretó
+      </label>
+      <FormField
+        id={prefix + "-suplemento"}
+        label="Suplemento"
+        error={errors.suplemento?.message}
+      >
         <input
+          id={prefix + "-suplemento"}
+          className="ra-input"
+          type="text"
+          aria-invalid={!!errors.suplemento}
+          aria-describedby={
+            errors.suplemento ? prefix + "-suplemento-error" : undefined
+          }
+          {...register("suplemento")}
+        />
+      </FormField>
+      <FormField
+        id={prefix + "-nextFeeding"}
+        label="Próxima comida (días)"
+        error={errors.nextFeeding?.message}
+      >
+        <input
+          id={prefix + "-nextFeeding"}
+          className="ra-input"
           type="number"
+          aria-invalid={!!errors.nextFeeding}
+          aria-describedby={
+            errors.nextFeeding ? prefix + "-nextFeeding-error" : undefined
+          }
+          {...register("nextFeeding", {
+            setValueAs: (value) => (value === "" ? undefined : Number(value)),
+          })}
           min={1}
           step={1}
-          placeholder="Ej: 2"
-          {...register("nextFeeding", {
-            setValueAs: (v) => (v === "" ? undefined : Number(v)),
-          })}
-          className="w-full rounded-xl border border-gray-200
-               px-4 py-2.5 text-gray-800
-               focus:outline-none focus:ring-2
-               focus:ring-emerald-500/30
-               focus:border-emerald-500
-               transition"
         />
-      </div>
-      {/* Observaciones */}
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-1">Observaciones</label>
+      </FormField>
+      <FormField
+        id={prefix + "-observaciones"}
+        label="Observaciones"
+        error={errors.observaciones?.message}
+      >
         <textarea
+          id={prefix + "-observaciones"}
+          className="ra-input"
           rows={3}
+          aria-invalid={!!errors.observaciones}
+          aria-describedby={
+            errors.observaciones ? prefix + "-observaciones-error" : undefined
+          }
           {...register("observaciones")}
-          className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800 resize-none
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
-          placeholder="Ej: rechazó parte del alimento"
         />
-      </div>
+      </FormField>
     </div>
   );
 }

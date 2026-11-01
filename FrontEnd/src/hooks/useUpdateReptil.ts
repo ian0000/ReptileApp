@@ -1,3 +1,4 @@
+import { successMessage } from "../utils/presentation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { updateReptileData } from "../api/ReptilApi";
 import type { ReptilId } from "../api/ids";
@@ -7,19 +8,17 @@ import type { ReptilFormData } from "../types";
 export function useUpdateReptil(reptilId: ReptilId, onSuccess?: () => void) {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (formData: ReptilFormData) => updateReptileData({ reptilId, formData }),
-    onSuccess: (message, formData) => {
-      queryClient.setQueryData(["reptil", reptilId], (oldData: unknown) =>
-        oldData && typeof oldData === "object" ? { ...oldData, ...formData } : formData,
-      );
+    mutationFn: (formData: ReptilFormData) =>
+      updateReptileData({ reptilId, formData }),
+    onSuccess: (message) => {
+      queryClient.invalidateQueries({ queryKey: ["reptile", reptilId] });
 
       queryClient.invalidateQueries({ queryKey: ["reptiles"] });
 
-      toast.success(message);
+      toast.success(
+        successMessage(message, "Reptil actualizado correctamente"),
+      );
       onSuccess?.();
-    },
-    onError: () => {
-      toast.error("Error al actualizar el reptil");
     },
   });
 }

@@ -1,97 +1,28 @@
-import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
-import ErrorMessage from "../../component/ErrorMessage";
-import type { ForgotPasswordForm } from "../../types";
+﻿import { useForm } from "react-hook-form";
+import { Link, useLocation } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
 import { forgotPassword } from "../../api/AuthApi";
-import { toast } from "react-toastify";
+import { ActionLink } from "../../design-system/components";
+import { FormField, FormNotice, SubmitButton } from "../../design-system/forms";
 
+type EmailForm = { email: string };
 export default function ForgotPasswordView() {
-  const initialValues: ForgotPasswordForm = {
-    email: "",
-  };
-  const {
-    register,
-    handleSubmit,
-    reset,
-    formState: { errors },
-  } = useForm({ defaultValues: initialValues });
-
-  const { mutate } = useMutation({
-    mutationFn: forgotPassword,
-    onError: (error) => {
-      toast.error(error.message);
-    },
-    onSuccess: (data) => {
-      toast.success(data);
-      reset();
-    },
-  });
-
-  const handleForgotPassword = (formData: ForgotPasswordForm) => {
-    mutate(formData);
-  };
-
+  const location = useLocation();
+  const state = location.state as { email?: string } | null;
+  const { register, handleSubmit, getValues, formState: { errors } } = useForm<EmailForm>({ defaultValues: { email: typeof state?.email === "string" ? state.email : "" } });
+  const mutation = useMutation({ mutationFn: forgotPassword });
   return (
     <>
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-extrabold text-gray-900">Restablecer contraseña</h1>
-        <p className="text-gray-500 mt-2">Ingresa tu email y te enviaremos las instrucciones</p>
-      </div>
-
-      {/* Form */}
-      <form onSubmit={handleSubmit(handleForgotPassword)} className="space-y-6" noValidate>
-        {/* Email */}
-        <div>
-          <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-1">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            placeholder="tu@email.com"
-            className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
-            {...register("email", {
-              required: "El email es obligatorio",
-              pattern: {
-                value: /\S+@\S+\.\S+/,
-                message: "E-mail no válido",
-              },
-            })}
-          />
-          {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
-        </div>
-
-        {/* Submit */}
-        <button
-          type="submit"
-          className="w-full mt-4 px-6 py-3 rounded-xl
-                   bg-gradient-to-r from-emerald-500 to-sky-500
-                   hover:from-emerald-600 hover:to-sky-600
-                   text-white font-bold text-lg
-                   shadow-lg transition-all
-                   transform hover:-translate-y-0.5"
-        >
-          Enviar instrucciones
-        </button>
-      </form>
-
-      {/* Links */}
-      <nav className="mt-8 flex flex-col gap-3 text-sm text-center">
-        <Link to="/auth/login" className="text-gray-500 hover:text-emerald-600 transition">
-          ¿Ya tienes cuenta? <span className="font-semibold">Iniciar sesión</span>
-        </Link>
-
-        <Link to="/auth/register" className="text-gray-500 hover:text-emerald-600 transition">
-          ¿No tienes cuenta? <span className="font-semibold">Crear cuenta</span>
-        </Link>
-      </nav>
+      <title>Recupera tu acceso. — ReptileApp</title>
+      <h1>Recupera tu acceso.</h1><p className="auth-intro">Te enviaremos por correo un código para restablecer tu contraseña.</p>
+      {mutation.isSuccess ? <div className="auth-outcome"><FormNotice tone="success">{mutation.data || "Solicitud enviada. Revisa tu correo."}</FormNotice><p>Cuando tengas el código, continúa para elegir una contraseña nueva.</p><ActionLink to="/auth/new-password" state={{ email: getValues("email") }}>Ya tengo el código</ActionLink><button type="button" className="auth-text-button" onClick={() => mutation.reset()}>Usar otro correo o volver a enviar</button></div> : (
+        <form className="ra-form" onSubmit={handleSubmit((data) => { if (!mutation.isPending) mutation.mutate(data); })} noValidate>
+          {mutation.isError && <FormNotice tone="error">{mutation.error.message}</FormNotice>}
+          <FormField id="forgot-email" label="Correo electrónico" error={errors.email?.message}><input id="forgot-email" className="ra-input" type="email" inputMode="email" autoComplete="email" aria-invalid={!!errors.email} aria-describedby={errors.email ? "forgot-email-error" : undefined} {...register("email", { required: "Ingresa tu correo electrónico", pattern: { value: /\S+@\S+\.\S+/, message: "Ingresa un correo válido" } })} /></FormField>
+          <SubmitButton pending={mutation.isPending} pendingLabel="Enviando…">Enviar instrucciones</SubmitButton>
+        </form>
+      )}
+      <nav className="ra-form-nav" aria-label="Opciones de acceso"><Link to="/auth/login">Volver a iniciar sesión</Link><Link to="/auth/register">Crear una cuenta</Link></nav>
     </>
   );
 }

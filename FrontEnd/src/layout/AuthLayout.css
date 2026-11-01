@@ -1,0 +1,31 @@
+﻿.reptile-design.auth-page { min-height: 100dvh; display: grid; background: var(--ra-mineral); }
+.auth-page a { text-underline-offset: .25em; }
+.auth-skip { position: absolute; top: 1rem; left: 1rem; z-index: 100; padding: .75rem 1rem; background: var(--ra-lime); color: var(--ra-petrol); transform: translateY(-200%); }
+.auth-skip:focus { transform: none; }
+.auth-story { display: none; }
+.auth-main { min-width: 0; padding: 1.25rem; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2rem; }
+.auth-mobile-brand { align-self: flex-start; display: inline-flex; align-items: center; min-height: 2.75rem; text-decoration: none; color: var(--ra-ink); }
+.auth-content { width: min(100%, 27rem); margin-block: 1rem; }
+.auth-content h1 { font-family: var(--ra-font-display); font-size: clamp(2rem, 4vw, 2.75rem); font-weight: 500; letter-spacing: -.025em; line-height: 1.1; margin: 0 0 1rem; }
+.auth-intro { color: var(--ra-muted); margin: 0 0 2rem; max-width: 42ch; }
+.auth-footnote { margin: 0; color: var(--ra-muted); font-size: .875rem; }
+.auth-outcome { display: grid; gap: 1.25rem; }
+.auth-outcome p { margin: 0; }
+.auth-outcome .ra-action { justify-self: start; }
+.auth-code { font-variant-numeric: tabular-nums; letter-spacing: .35em; font-size: 1.5rem; text-align: center; }
+.auth-help { color: var(--ra-muted); font-size: .9375rem; margin: .25rem 0 0; }
+.auth-security-note { color: var(--ra-muted); font-size: .875rem; margin: 0; }
+@media (min-width: 64rem) {
+  .reptile-design.auth-page { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); }
+  .auth-story { display: flex; flex-direction: column; justify-content: space-between; position: relative; isolation: isolate; overflow: hidden; padding: clamp(2rem, 4vw, 4rem); background: var(--ra-petrol); color: var(--ra-mineral); }
+  .auth-brand { display: inline-flex; align-self: start; min-height: 2.75rem; text-decoration: none; color: inherit; }
+  .auth-story-copy { margin-top: 4rem; z-index: 1; }
+  .auth-story-copy > p:first-child { font-family: var(--ra-font-display); font-size: clamp(3rem, 5vw, 5rem); font-weight: 500; line-height: 1.05; letter-spacing: -.03em; margin: 0 0 1.5rem; }
+  .auth-story-copy span { color: var(--ra-lime); }
+  .auth-story-copy > p:last-child { max-width: 30ch; color: #c9d6cb; margin: 0; font-size: 1.125rem; }
+  .auth-gecko { display: block; width: min(75%, 24rem); height: auto; align-self: end; margin-block: -1rem -2rem; }
+  .auth-return { align-self: start; display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--ra-mineral); font-size: .9375rem; z-index: 1; }
+  .auth-main { padding: clamp(2rem, 4vw, 4rem); }
+  .auth-mobile-brand { display: none; }
+}
+.auth-text-button { justify-self: start; appearance: none; background: none; border: 0; padding: .5rem 0; min-height: 2.75rem; color: var(--ra-ink); font: inherit; text-decoration: underline; text-underline-offset: .25em; cursor: pointer; }

@@ -1,4 +1,4 @@
-import { isAxiosError } from "axios";
+import { normalizeApiError } from "./errors";
 import api from "../lib/axios";
 import { logPesajeFormSchema, type LogPesajeFormData } from "../types";
 import type { LogPesajeId, ReptilId } from "./ids";
@@ -7,17 +7,20 @@ import { schemas } from "./client";
 
 type LogPesaje = components["schemas"]["LogPesaje"];
 
-export async function createLogPesaje(reptilId: ReptilId, formData: LogPesajeFormData) {
+export async function createLogPesaje(
+  reptilId: ReptilId,
+  formData: LogPesajeFormData,
+) {
   try {
-    const payload = logPesajeFormSchema.parse({ ...formData, reptil: reptilId });
+    const payload = logPesajeFormSchema.parse({
+      ...formData,
+      reptil: reptilId,
+    });
 
     const { data } = await api.post(`/reptiles/${reptilId}/logPesaje`, payload);
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error || "Error creating weight log");
-    }
-    throw error;
+    throw normalizeApiError(error);
   }
 }
 
@@ -26,14 +29,16 @@ export async function getLogPesajes(
 ): Promise<Pick<LogPesaje, "_id" | "peso" | "unidad" | "createdAt">[]> {
   try {
     const { data } = await api.get(`/reptiles/${reptilId}/logPesaje`);
-    return schemas.LogPesaje.pick({ _id: true, peso: true, unidad: true, createdAt: true })
+    return schemas.LogPesaje.pick({
+      _id: true,
+      peso: true,
+      unidad: true,
+      createdAt: true,
+    })
       .array()
       .parse(data);
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error || "Error fetching weight logs");
-    }
-    throw error;
+    throw normalizeApiError(error);
   }
 }
 export async function getLogPesajeById(
@@ -41,13 +46,12 @@ export async function getLogPesajeById(
   logPesajeId: LogPesajeId,
 ): Promise<LogPesaje> {
   try {
-    const { data } = await api.get(`/reptiles/${reptilId}/logPesaje/${logPesajeId}`);
+    const { data } = await api.get(
+      `/reptiles/${reptilId}/logPesaje/${logPesajeId}`,
+    );
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error || "Error fetching weight log");
-    }
-    throw error;
+    throw normalizeApiError(error);
   }
 }
 
@@ -62,24 +66,29 @@ export async function updateLogPesajeData({
   formData,
 }: UpdateLogPesajeArgs) {
   try {
-    const payload = logPesajeFormSchema.parse({ ...formData, reptil: reptilId });
-    const { data } = await api.patch(`/reptiles/${reptilId}/logPesaje/${logPesajeId}`, payload);
+    const payload = logPesajeFormSchema.parse({
+      ...formData,
+      reptil: reptilId,
+    });
+    const { data } = await api.patch(
+      `/reptiles/${reptilId}/logPesaje/${logPesajeId}`,
+      payload,
+    );
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error || "Error updating weight log");
-    }
-    throw error;
+    throw normalizeApiError(error);
   }
 }
-export async function deleteLogPesajeById(reptilId: ReptilId, logPesajeId: LogPesajeId) {
+export async function deleteLogPesajeById(
+  reptilId: ReptilId,
+  logPesajeId: LogPesajeId,
+) {
   try {
-    const { data } = await api.delete(`/reptiles/${reptilId}/logPesaje/${logPesajeId}`);
+    const { data } = await api.delete(
+      `/reptiles/${reptilId}/logPesaje/${logPesajeId}`,
+    );
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error || "Error deleting weight log");
-    }
-    throw error;
+    throw normalizeApiError(error);
   }
 }

@@ -74,10 +74,22 @@ El proyecto Vercel `reptile-app`, el DNS legacy `reptiles.ian-k.dev` y el Worker
 | Backend | `npm run build` | Compila TypeScript |
 | Backend | `npm start` | Ejecuta el backend compilado |
 | FrontEnd | `npm run lint` | Revisa el código |
+| FrontEnd | `npm run test:contracts` | Verifica contratos de autenticación, reptiles, mutaciones y feedback con HTTP simulado |
 | FrontEnd | `npm run build` | Comprueba tipos y genera la web |
 | FrontEnd | `npm run preview` | Sirve el build local |
 
-No hay un script de pruebas automatizadas declarado en ninguno de los dos paquetes. Los comandos anteriores describen el repositorio; no representan una certificación de producción.
+El frontend incluye `test:contracts`, que ejecuta Node test runner con un loader TypeScript usando la dependencia ya declarada y un adaptador Axios simulado: no abre conexiones reales ni modifica cuentas. El backend no declara un script de tests. Estos controles no representan una certificación de producción ni sustituyen un smoke autenticado contra un entorno de pruebas.
+
+## Refactor de experiencia frontend
+
+Esta rama desarrolla la identidad **Cada reptil, su historia**: petróleo, lima y superficies minerales, una landing pública en `/bienvenida` y un sistema de componentes reutilizables para acceso, reptiles e historiales. El dashboard continúa en `/`; la landing no reemplaza el acceso autenticado.
+
+- El formulario, sus estados y sus acciones comparten tokens y controles accesibles.
+- Los diálogos de formularios/confirmación reutilizan Headless UI ya instalado.
+- Los datos de ejemplo de la landing están rotulados como demostración; su ilustración no representa un reptil de una cuenta real.
+- El alcance no modifica reglas del backend, MongoDB, contratos ni infraestructura.
+
+El tablero de implementación, los límites de cobertura y las verificaciones están en [docs/FRONTEND_REFACTOR.md](docs/FRONTEND_REFACTOR.md). Las instrucciones y rutas del cliente están en [FrontEnd/README.md](FrontEnd/README.md). Los módulos se validan localmente antes de la subida autorizada a GitHub; el usuario también autorizó la publicación de la versión validada mediante main. La verificación del despliegue debe registrarse por separado; este README no acredita por sí mismo producción actualizada.
 
 ## Sobre el proyecto
 

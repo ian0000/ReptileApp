@@ -1,3 +1,4 @@
+import { successMessage } from "../utils/presentation";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { LogPesajeId, ReptilId } from "../api/ids";
 import type { LogPesajeFormData } from "../types";
@@ -14,15 +15,18 @@ export function useUpdateLogPesaje(
     mutationFn: (formData: LogPesajeFormData) =>
       updateLogPesajeData({ reptilId, logPesajeId, formData }),
     onSuccess: (message, formData) => {
-      queryClient.setQueryData(["logPesaje", reptilId, logPesajeId], (oldData: unknown) =>
-        oldData && typeof oldData === "object" ? { ...oldData, ...formData } : formData,
+      queryClient.setQueryData(
+        ["logPesaje", reptilId, logPesajeId],
+        (oldData: unknown) =>
+          oldData && typeof oldData === "object"
+            ? { ...oldData, ...formData }
+            : formData,
       );
       queryClient.invalidateQueries({ queryKey: ["logPesajes", reptilId] });
-      toast.success(message);
+      toast.success(
+        successMessage(message, "Pesaje actualizado correctamente"),
+      );
       onSuccess?.();
-    },
-    onError: () => {
-      toast.error("Error al actualizar el registro de pesaje");
     },
   });
 }
