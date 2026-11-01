@@ -1,147 +1,124 @@
-import { Link, Navigate, Outlet } from "react-router-dom";
+﻿import { Link, NavLink, Navigate, Outlet, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { getReptiles } from "../api/ReptilApi";
 import { useAuth } from "../hooks/useAuth";
+import { ActionLink, BrandMark } from "../design-system/components";
+import { FormNotice } from "../design-system/forms";
+import "./AppLayout.css";
 
 export default function AppLayout() {
   const queryClient = useQueryClient();
-  const { data, isError, isLoading } = useAuth();
-
+  const navigate = useNavigate();
+  const { data, error, isError, isLoading, refetch } = useAuth();
+  const token = localStorage.getItem("AUTH_TOKEN");
   const { data: reptilesData } = useQuery({
     queryKey: ["reptiles"],
     queryFn: getReptiles,
-    enabled: !!data,
+    enabled: !!data && !!token,
   });
-
+  const authError = error;
+  const status =
+    authError && typeof authError === "object" && "status" in authError
+      ? Number(authError.status)
+      : undefined;
+  const logout = async () => {
+    localStorage.removeItem("AUTH_TOKEN");
+    await queryClient.cancelQueries();
+    queryClient.clear();
+    navigate("/auth/login", { replace: true });
+  };
+  if (!token || (isError && (status === 401 || status === 403))) {
+    return <Navigate to="/auth/login" replace />;
+  }
   if (isLoading) {
     return (
-      <div className="min-h-[70vh] flex items-center justify-center">
-        <p className="text-gray-400 text-lg animate-pulse">Cargando reptil...</p>
+      <div className="reptile-design ra-session-state" role="status">
+        <BrandMark />
+        <h1>Preparando tu espacio de cuidado.</h1>
+        <p>Comprobando tu sesión…</p>
       </div>
     );
   }
-  if (isError) {
-    return <Navigate to="/auth/login" replace />;
+  if (isError || !data) {
+    return (
+      <div className="reptile-design ra-session-state">
+        <BrandMark />
+        <h1>No pudimos conectar con tu cuenta.</h1>
+        <FormNotice tone="error">
+          La sesión no pudo comprobarse. Puedes reintentar sin perder tus datos.
+        </FormNotice>
+        <div className="ra-session-actions">
+          <button
+            type="button"
+            className="ra-submit"
+            onClick={() => refetch()}
+          >
+            Volver a intentar
+          </button>
+          <button
+            type="button"
+            className="ra-button ra-button--secondary"
+            onClick={logout}
+          >
+            Ir al inicio de sesión
+          </button>
+        </div>
+      </div>
+    );
   }
-  const reptileCount = reptilesData?.length ?? 0;
-
-  const logout = () => {
-    localStorage.removeItem("AUTH_TOKEN");
-    queryClient.resetQueries({ queryKey: ["user"] });
-  };
-
   return (
-    <div
-      className="min-h-screen flex flex-col
-                    bg-gradient-to-br from-emerald-50 via-white to-sky-50
-                    dark:from-gray-900 dark:via-gray-900 dark:to-gray-800
-                    transition-colors"
-    >
-      {/* Header */}
-      <header
-        className="bg-white/80 dark:bg-gray-900/80
-                         backdrop-blur-md shadow-sm
-                         sticky top-0 z-50"
-      >
-        <div
-          className="max-w-7xl mx-auto px-6 py-4
-                        flex justify-between items-center"
-        >
-          {/* Brand */}
+    <div className="reptile-design ra-app-shell">
+      <a className="ra-app-skip" href="#app-main">
+        Saltar al contenido
+      </a>
+      <header className="ra-app-header">
+        <div className="ra-app-header-inner">
           <Link
             to="/"
-            className="text-2xl font-extrabold
-                       bg-gradient-to-r from-emerald-500 to-sky-500
-                       bg-clip-text text-transparent"
+            className="ra-app-brand"
+            aria-label="ReptileApp — Mis reptiles"
           >
-            ReptilApp 🦎
+            <BrandMark />
           </Link>
-
-          {/* Navigation */}
-          <nav className="flex items-center gap-6">
-            <Link
-              to="/"
-              className="relative font-semibold
-                         text-gray-600 dark:text-gray-300
-                         hover:text-emerald-600 dark:hover:text-emerald-400
-                         transition"
-            >
-              Dashboard
-              {/* Badge */}
-              <span
-                className="absolute -top-2 -right-4
-                           bg-emerald-500 text-white
-                           text-xs font-bold
-                           w-5 h-5 rounded-full
-                           flex items-center justify-center
-                           shadow"
-              >
-                {reptileCount}
-              </span>
-            </Link>
-
-            <Link
-              to="/reptiles/nuevo"
-              className="px-4 py-2 rounded-lg
-                         bg-gradient-to-r from-emerald-500 to-sky-500
-                         hover:from-emerald-600 hover:to-sky-600
-                         text-white font-bold
-                         shadow transition"
-            >
-              + Reptil
-            </Link>
-            {/* Cerrar sesión */}
-            <button
-              onClick={logout}
-              className="px-4 py-2 rounded-lg
-               border border-gray-200 dark:border-gray-700
-               text-gray-600 dark:text-gray-300
-               hover:bg-red-50 hover:text-red-600
-               dark:hover:bg-red-900/30 dark:hover:text-red-400
-               transition font-semibold"
-            >
+          <nav className="ra-app-nav" aria-label="Navegación principal">
+            <NavLink to="/" end className="ra-app-home">
+              Mis reptiles
+              {reptilesData && (
+                <span
+                  className="ra-app-count"
+                  aria-label={`${reptilesData.length} reptiles`}
+                >
+                  {reptilesData.length}
+                </span>
+              )}
+            </NavLink>
+            <ActionLink to="/reptiles/nuevo">Añadir reptil</ActionLink>
+            <button type="button" className="ra-app-logout" onClick={logout}>
               Cerrar sesión
             </button>
           </nav>
         </div>
       </header>
-
-      {/* Content */}
-      <main className="flex-1">
+      <main id="app-main" tabIndex={-1} className="ra-app-main">
         <Outlet />
       </main>
-
-      {/* Footer */}
-      <footer
-        className="bg-white/70 dark:bg-gray-900/70
-                         backdrop-blur border-t
-                         border-gray-200 dark:border-gray-700 mt-16"
-      >
-        <p className="text-center text-gray-500 dark:text-gray-400 py-6 text-sm">
-          © {new Date().getFullYear()} ReptilApp · Todos los derechos reservados
+      <footer className="ra-app-footer">
+        <p>
+          © {new Date().getFullYear()} ReptileApp · Cada reptil, su historia.
         </p>
+        <Link to="/bienvenida">Conoce ReptileApp</Link>
       </footer>
-
-      {/* Toast */}
       <ToastContainer
-        position="top-center"
-        autoClose={4000}
+        position="bottom-right"
+        autoClose={6000}
         newestOnTop
-        pauseOnHover={false}
-        pauseOnFocusLoss={false}
-        closeOnClick
-        draggable
+        pauseOnHover
+        pauseOnFocusLoss
+        closeOnClick={false}
+        draggable={false}
         limit={3}
-        className="!z-[9999] mt-20"
-        toastStyle={{
-          borderRadius: "0.75rem",
-          boxShadow: "0 10px 25px rgba(0,0,0,0.15)",
-        }}
-        toastClassName="
-    bg-white dark:bg-gray-800
-    text-gray-800 dark:text-gray-100
-  "
+        className="ra-app-toasts"
       />
     </div>
   );

@@ -1,18 +1,15 @@
+﻿import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import type { LogComidasId, ReptilId } from "../../api/ids";
 import type { LogComidasFormData } from "../../types";
-import { useEffect } from "react";
 import { useLogComida } from "../../hooks/useLogComidas";
 import { useCreateLogComidas } from "../../hooks/useCreateLogComidas";
 import { useUpdateLogComidas } from "../../hooks/useUpdateLogComidas";
+import Dialog from "../../design-system/Dialog";
+import { FormNotice, SubmitButton } from "../../design-system/forms";
+import { recordError } from "../note/recordError";
 import LogComidaForm from "./LogComidaForm";
-
-type LogComidaFormModalProps = {
-  reptilId: ReptilId;
-  logId?: LogComidasId;
-  onClose: () => void;
-};
-
+type Props = { reptilId: ReptilId; logId?: LogComidasId; onClose: () => void };
 const initialValues: LogComidasFormData = {
   cantidad: 1,
   unidad: undefined,
@@ -24,103 +21,93 @@ const initialValues: LogComidasFormData = {
   apetito: undefined,
   nextFeeding: 1,
 };
-
-export default function LogComidaFormModal({ reptilId, logId, onClose }: LogComidaFormModalProps) {
+export default function LogComidaFormModal({
+  reptilId,
+  logId,
+  onClose,
+}: Props) {
   const isEdit = Boolean(logId);
-  const { data: log, isLoading } = useLogComida(reptilId, logId, {
-    enabled: isEdit,
-  });
-
+  const query = useLogComida(reptilId, logId, { enabled: isEdit });
   const createMutation = useCreateLogComidas(reptilId, onClose);
   const updateMutation = useUpdateLogComidas(reptilId, logId!, onClose);
-
+  const mutation = isEdit ? updateMutation : createMutation;
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm<LogComidasFormData>({ defaultValues: initialValues });
-
   useEffect(() => {
-    if (!logId) {
-      reset(initialValues);
-      return;
-    }
-    if (log) {
+    if (!isEdit) return;
+    if (query.data && !isDirty)
       reset({
-        cantidad: log.cantidad,
-        unidad: log.unidad,
-        tipoAlimento: log.tipoAlimento,
-        suplemento: log.suplemento,
-        metodo: log.metodo,
-        observaciones: log.observaciones,
-        excreto: log.excreto,
-        apetito: log.apetito,
-        nextFeeding: log.nextFeeding,
+        cantidad: query.data.cantidad,
+        unidad: query.data.unidad,
+        tipoAlimento: query.data.tipoAlimento,
+        suplemento: query.data.suplemento,
+        metodo: query.data.metodo,
+        observaciones: query.data.observaciones,
+        excreto: query.data.excreto,
+        apetito: query.data.apetito,
+        nextFeeding: query.data.nextFeeding,
       });
-    }
-  }, [logId, log, reset]);
+  }, [isEdit, query.data, isDirty, reset]);
   const handleForm = (formData: LogComidasFormData) => {
-    if (isEdit) {
-      updateMutation.mutate(formData);
-    } else {
-      createMutation.mutate(formData);
-    }
+    if (!mutation.isPending) mutation.mutate(formData);
   };
   return (
-    <div
-      className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm
-                  flex items-center justify-center px-4"
+    <Dialog
+      open
+      onClose={() => {
+        if (!mutation.isPending) onClose();
+      }}
+      title={isEdit ? "Editar comida" : "Registrar comida"}
+      description="Los cambios se guardarán en el historial de este ejemplar."
     >
-      <div
-        className="bg-white rounded-2xl w-full max-w-md
-                    shadow-xl overflow-hidden"
-      >
-        {/* Header */}
-        <div className="px-6 py-4 border-b">
-          <h2 className="text-xl font-extrabold text-gray-900">
-            {isEdit ? "Editar Comida" : "Nueva Comida"}
-          </h2>
-          <p className="text-sm text-gray-500 mt-1">
-            {isEdit ? "Actualiza la información del log" : "Registra un nuevo log"}
-          </p>
-        </div>
-
-        {/* Body */}
-        <div className="p-6">
-          {isEdit && isLoading ? (
-            <p className="text-center py-10 text-gray-500">Cargando logs...</p>
-          ) : (
-            <form onSubmit={handleSubmit(handleForm)}>
-              <LogComidaForm register={register} errors={errors} />
-
-              {/* Footer */}
-              <div className="flex justify-end gap-3 mt-6">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2 rounded-lg
-                           text-gray-600 font-semibold
-                           hover:bg-gray-100 transition"
-                >
-                  Cancelar
-                </button>
-
-                <button
-                  type="submit"
-                  className="px-5 py-2.5 rounded-xl
-                           bg-gradient-to-r from-emerald-500 to-sky-500
-                           hover:from-emerald-600 hover:to-sky-600
-                           text-white font-bold
-                           shadow-md transition"
-                >
-                  Guardar
-                </button>
-              </div>
-            </form>
+      {isEdit && query.isLoading ? (
+        <p role="status">Cargando registro…</p>
+      ) : isEdit && query.isError ? (
+        <FormNotice tone="error">
+          {recordError(query.error)}{" "}
+          <button
+            type="button"
+            className="ra-history-retry"
+            onClick={() => void query.refetch()}
+            disabled={query.isFetching}
+          >
+            Reintentar
+          </button>
+        </FormNotice>
+      ) : (
+        <form className="ra-form" onSubmit={handleSubmit(handleForm)}>
+          {mutation.isError && (
+            <FormNotice tone="error">{recordError(mutation.error)}</FormNotice>
           )}
-        </div>
-      </div>
-    </div>
+          <fieldset
+            disabled={mutation.isPending}
+            className="ra-history-fieldset"
+          >
+            <legend className="sr-only">Datos del registro</legend>
+            <LogComidaForm register={register} errors={errors} />
+          </fieldset>
+          <div className="ra-record-dialog-actions">
+            <button
+              className="ra-record-cancel"
+              type="button"
+              onClick={onClose}
+              disabled={mutation.isPending}
+            >
+              Cancelar
+            </button>
+            <SubmitButton
+              pending={mutation.isPending}
+              pendingLabel="Guardando…"
+            >
+              Guardar comida
+            </SubmitButton>
+          </div>
+        </form>
+      )}
+    </Dialog>
   );
 }

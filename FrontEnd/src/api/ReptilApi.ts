@@ -1,4 +1,4 @@
-import { isAxiosError } from "axios";
+import { normalizeApiError } from "./errors";
 import api from "../lib/axios";
 import { reptilFormSchema, type ReptilFormData } from "../types";
 import type { components } from "./types";
@@ -9,16 +9,15 @@ type Reptil = components["schemas"]["Reptil"];
 
 export async function createReptil(formData: ReptilFormData) {
   try {
-    // Validación UX (opcional pero recomendable)
-    const payload = reptilFormSchema.parse(formData);
+    const payload = reptilFormSchema.parse({
+      ...formData,
+      birthDate: formData.birthDate || undefined,
+    });
 
     const { data } = await api.post("/reptiles/create-reptil", payload);
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error || "Error creating reptile");
-    }
-    throw error;
+    throw normalizeApiError(error);
   }
 }
 
@@ -28,15 +27,16 @@ export async function getReptiles(): Promise<
   try {
     const { data } = await api.get("/reptiles");
 
-    // Validación API (opcional)
-    return schemas.Reptil.pick({ _id: true, name: true, birthDate: true, owner: true })
+    return schemas.Reptil.pick({
+      _id: true,
+      name: true,
+      birthDate: true,
+      owner: true,
+    })
       .array()
       .parse(data);
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error || "Error fetching reptiles");
-    }
-    throw error;
+    throw normalizeApiError(error);
   }
 }
 
@@ -45,10 +45,7 @@ export async function getReptilById(reptilId: ReptilId): Promise<Reptil> {
     const { data } = await api.get(`/reptiles/${reptilId}`);
     return schemas.Reptil.parse(data);
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error || "Error fetching reptile");
-    }
-    throw error;
+    throw normalizeApiError(error);
   }
 }
 
@@ -57,18 +54,24 @@ type UpdateReptilArgs = {
   reptilId: ReptilId;
 };
 
-export async function updateReptileData({ formData, reptilId }: UpdateReptilArgs) {
+export async function updateReptileData({
+  formData,
+  reptilId,
+}: UpdateReptilArgs) {
   try {
-    const payload = reptilFormSchema.parse(formData);
+    const payload = reptilFormSchema.parse({
+      ...formData,
+      birthDate: formData.birthDate || undefined,
+    });
 
-    const { data } = await api.patch(`/reptiles/update-reptil/${reptilId}`, payload);
+    const { data } = await api.patch(
+      `/reptiles/update-reptil/${reptilId}`,
+      payload,
+    );
 
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error || "Error updating reptile");
-    }
-    throw error;
+    throw normalizeApiError(error);
   }
 }
 
@@ -77,8 +80,6 @@ export async function deleteReptilById(reptilId: ReptilId) {
     const { data } = await api.delete(`/reptiles/delete-reptil/${reptilId}`);
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response?.data.error || "Error deleting reptile");
-    }
+    throw normalizeApiError(error);
   }
 }

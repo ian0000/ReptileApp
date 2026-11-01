@@ -1,100 +1,101 @@
+﻿import { useId } from "react";
 import type { FieldErrors, UseFormRegister } from "react-hook-form";
 import type { LogPesajeFormData } from "../../types";
 import { schemas } from "../../api/client";
-
-type LogPesajeFormProps = {
+import { FormField } from "../../design-system/forms";
+type Props = {
   register: UseFormRegister<LogPesajeFormData>;
   errors: FieldErrors<LogPesajeFormData>;
 };
-
-const UNIDAD_OPTIONS = schemas.Unidad.options;
-const CONTEXTO_OPTIONS = schemas.ContextoPesaje.options;
-export default function LogPesajeForm({ register, errors }: LogPesajeFormProps) {
+export default function LogPesajeForm({ register, errors }: Props) {
+  const prefix = useId();
   return (
-    <div className="space-y-6">
-      {/* Peso */}
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-1">Peso</label>
+    <div className="ra-history-fields">
+      <FormField
+        id={prefix + "-peso"}
+        label="Peso"
+        error={errors.peso?.message}
+      >
         <input
+          id={prefix + "-peso"}
+          className="ra-input"
           type="number"
-          step="0.01"
+          aria-invalid={!!errors.peso}
+          aria-describedby={errors.peso ? prefix + "-peso-error" : undefined}
           {...register("peso", {
             required: "El peso es obligatorio",
             valueAsNumber: true,
           })}
-          className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
+          step="0.01"
         />
-        {errors.peso && <p className="text-red-500 text-sm mt-1">{errors.peso.message}</p>}
-      </div>
-
-      {/* Grid 2 columnas */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-        {/* Unidad */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Unidad</label>
+      </FormField>
+      <div className="ra-history-form-grid">
+        <FormField
+          id={prefix + "-unidad"}
+          label="Unidad"
+          error={errors.unidad?.message}
+        >
           <select
+            id={prefix + "-unidad"}
+            className="ra-input"
+            aria-invalid={!!errors.unidad}
+            aria-describedby={
+              errors.unidad ? prefix + "-unidad-error" : undefined
+            }
             {...register("unidad", {
+              setValueAs: (value) => (value === "" ? undefined : value),
               required: "Selecciona una unidad",
             })}
-            className="w-full rounded-xl border border-gray-200
-                       px-4 py-2.5 text-gray-800 bg-white
-                       focus:outline-none focus:ring-2
-                       focus:ring-emerald-500/30
-                       focus:border-emerald-500
-                       transition"
           >
-            <option value="">Seleccionar</option>
-            {UNIDAD_OPTIONS.map((type) => (
-              <option key={type} value={type}>
-                {type}
+            <option value="">Seleccionar unidad</option>
+            {schemas.Unidad.options.map((option) => (
+              <option key={option} value={option}>
+                {option}
               </option>
             ))}
           </select>
-          {errors.unidad && <p className="text-red-500 text-sm mt-1">{errors.unidad.message}</p>}
-        </div>
-
-        {/* Contexto */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Contexto</label>
+        </FormField>
+        <FormField
+          id={prefix + "-contexto"}
+          label="Contexto"
+          error={errors.contexto?.message}
+        >
           <select
-            {...register("contexto")}
-            className="w-full rounded-xl border border-gray-200
-                       px-4 py-2.5 text-gray-800 bg-white
-                       focus:outline-none focus:ring-2
-                       focus:ring-emerald-500/30
-                       focus:border-emerald-500
-                       transition"
+            id={prefix + "-contexto"}
+            className="ra-input"
+            aria-invalid={!!errors.contexto}
+            aria-describedby={
+              errors.contexto ? prefix + "-contexto-error" : undefined
+            }
+            {...register("contexto", {
+              setValueAs: (value) => (value === "" ? undefined : value),
+            })}
           >
             <option value="">Sin contexto</option>
-            {CONTEXTO_OPTIONS.map((type) => (
-              <option key={type} value={type}>
-                {type}
+            {schemas.ContextoPesaje.options.map((option) => (
+              <option key={option} value={option}>
+                {option}
               </option>
             ))}
           </select>
-        </div>
+        </FormField>
       </div>
-
-      {/* Observaciones */}
-      <div>
-        <label className="block text-sm font-semibold text-gray-700 mb-1">Observaciones</label>
+      <FormField
+        id={prefix + "-observaciones"}
+        label="Observaciones"
+        error={errors.observaciones?.message}
+      >
         <textarea
+          id={prefix + "-observaciones"}
+          className="ra-input"
           rows={3}
+          aria-invalid={!!errors.observaciones}
+          aria-describedby={
+            errors.observaciones ? prefix + "-observaciones-error" : undefined
+          }
           {...register("observaciones")}
-          className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800 resize-none
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
-          placeholder="Ej: muda reciente, cambio de dieta, etc."
         />
-      </div>
+      </FormField>
     </div>
   );
 }

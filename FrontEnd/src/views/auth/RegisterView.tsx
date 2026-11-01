@@ -1,174 +1,30 @@
-import { useForm } from "react-hook-form";
-import ErrorMessage from "../../component/ErrorMessage";
-import type { UserRegistrationForm } from "../../types";
+﻿import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 import { createAccount } from "../../api/AuthApi";
+import { ActionLink } from "../../design-system/components";
+import { FormField, FormNotice, SubmitButton } from "../../design-system/forms";
+import type { UserRegistrationForm } from "../../types";
 
 export default function RegisterView() {
-  const initialValues: UserRegistrationForm = {
-    name: "",
-    email: "",
-    password: "",
-    password_confirmation: "",
-  };
-
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    formState: { errors },
-  } = useForm<UserRegistrationForm>({ defaultValues: initialValues });
-
-  const { mutate } = useMutation({
-    mutationFn: createAccount,
-    onError: (error) => {
-      toast.error(error.message);
-    },
-    onSuccess: (data) => {
-      toast.success(data);
-      reset();
-    },
-  });
-
+  const { register, handleSubmit, watch, getValues, formState: { errors } } = useForm<UserRegistrationForm>({ defaultValues: { email: "", name: "", password: "", password_confirmation: "" } });
   const password = watch("password");
-
-  const handleRegister = (formData: UserRegistrationForm) => {
-    mutate(formData);
-  };
-
+  const mutation = useMutation({ mutationFn: createAccount });
   return (
     <>
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-extrabold text-gray-900">Crear cuenta</h1>
-        <p className="text-gray-500 mt-2">Completa el formulario para comenzar</p>
-      </div>
-
-      {/* Form */}
-      <form onSubmit={handleSubmit(handleRegister)} className="space-y-6" noValidate>
-        {/* Email */}
-        <div>
-          <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-1">
-            Email
-          </label>
-          <input
-            id="email"
-            type="email"
-            placeholder="tu@email.com"
-            className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
-            {...register("email", {
-              required: "El email de registro es obligatorio",
-              pattern: {
-                value: /\S+@\S+\.\S+/,
-                message: "E-mail no válido",
-              },
-            })}
-          />
-          {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
-        </div>
-
-        {/* Nombre */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Nombre</label>
-          <input
-            type="text"
-            placeholder="Tu nombre"
-            className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
-            {...register("name", {
-              required: "El nombre es obligatorio",
-            })}
-          />
-          {errors.name && <ErrorMessage>{errors.name.message}</ErrorMessage>}
-        </div>
-
-        {/* Password */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Contraseña</label>
-          <input
-            type="password"
-            placeholder="••••••••"
-            className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
-            {...register("password", {
-              required: "La contraseña es obligatoria",
-              minLength: {
-                value: 8,
-                message: "Debe tener al menos 8 caracteres",
-              },
-            })}
-          />
-          {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
-        </div>
-
-        {/* Confirm Password */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">
-            Repetir contraseña
-          </label>
-          <input
-            id="password_confirmation"
-            type="password"
-            placeholder="••••••••"
-            className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
-            {...register("password_confirmation", {
-              required: "Debes repetir la contraseña",
-              validate: (value) => value === password || "Las contraseñas no coinciden",
-            })}
-          />
-          {errors.password_confirmation && (
-            <ErrorMessage>{errors.password_confirmation.message}</ErrorMessage>
-          )}
-        </div>
-
-        {/* Submit */}
-        <button
-          type="submit"
-          className="w-full mt-4 px-6 py-3 rounded-xl
-                   bg-gradient-to-r from-emerald-500 to-sky-500
-                   hover:from-emerald-600 hover:to-sky-600
-                   text-white font-bold text-lg
-                   shadow-lg transition-all
-                   transform hover:-translate-y-0.5"
-        >
-          Crear cuenta
-        </button>
-      </form>
-
-      {/* Links */}
-      <nav className="mt-8 flex flex-col gap-3 text-sm text-center">
-        <Link to="/auth/login" className="text-gray-500 hover:text-emerald-600 transition">
-          ¿Ya tienes cuenta? <span className="font-semibold">Iniciar sesión</span>
-        </Link>
-
-        <Link
-          to="/auth/forgot-password"
-          className="text-gray-500 hover:text-emerald-600 transition"
-        >
-          ¿Olvidaste tu contraseña?
-        </Link>
-      </nav>
+      <title>Crear cuenta — ReptileApp</title>
+      <h1>Empieza su historia.</h1><p className="auth-intro">Crea tu cuenta y confirma tu correo para registrar el cuidado de tus reptiles.</p>
+      {mutation.isSuccess ? <div className="auth-outcome"><FormNotice tone="success">{mutation.data || "Cuenta creada. Revisa tu correo para obtener el código de confirmación."}</FormNotice><p>Introduce el código recibido para activar el acceso.</p><ActionLink to="/auth/confirm-account" state={{ email: getValues("email") }}>Confirmar mi cuenta</ActionLink><Link to="/auth/request-code" state={{ email: getValues("email") }}>No recibí el código</Link></div> : (
+        <form className="ra-form" onSubmit={handleSubmit((data) => { if (!mutation.isPending) mutation.mutate(data); })} noValidate>
+          {mutation.isError && <FormNotice tone="error">{mutation.error.message}</FormNotice>}
+          <FormField id="register-name" label="Nombre" error={errors.name?.message}><input id="register-name" className="ra-input" autoComplete="name" aria-invalid={!!errors.name} aria-describedby={errors.name ? "register-name-error" : undefined} {...register("name", { required: "Ingresa tu nombre" })} /></FormField>
+          <FormField id="register-email" label="Correo electrónico" error={errors.email?.message}><input id="register-email" className="ra-input" type="email" autoComplete="email" inputMode="email" aria-invalid={!!errors.email} aria-describedby={errors.email ? "register-email-error" : undefined} {...register("email", { required: "Ingresa tu correo electrónico", pattern: { value: /\S+@\S+\.\S+/, message: "Ingresa un correo válido" } })} /></FormField>
+          <FormField id="register-password" label="Contraseña" hint="Usa al menos 8 caracteres." error={errors.password?.message}><input id="register-password" className="ra-input" type="password" autoComplete="new-password" aria-invalid={!!errors.password} aria-describedby={`register-password-hint${errors.password ? " register-password-error" : ""}`} {...register("password", { required: "Crea una contraseña", minLength: { value: 8, message: "Usa al menos 8 caracteres" } })} /></FormField>
+          <FormField id="register-confirmation" label="Repetir contraseña" error={errors.password_confirmation?.message}><input id="register-confirmation" className="ra-input" type="password" autoComplete="new-password" aria-invalid={!!errors.password_confirmation} aria-describedby={errors.password_confirmation ? "register-confirmation-error" : undefined} {...register("password_confirmation", { required: "Repite tu contraseña", validate: (value) => value === password || "Las contraseñas no coinciden" })} /></FormField>
+          <SubmitButton pending={mutation.isPending} pendingLabel="Creando cuenta…">Crear cuenta</SubmitButton>
+        </form>
+      )}
+      <nav className="ra-form-nav" aria-label="Opciones de acceso"><p>¿Ya tienes cuenta? <Link to="/auth/login">Iniciar sesión</Link></p></nav>
     </>
   );
 }

@@ -106,7 +106,7 @@ El portfolio es independiente de ReptileApp: `ian-k.dev` apunta a `ian-k-dev.pag
 - Backend: `npm ci` y `npm run build`.
 - Frontend: `npm ci`, `npm run build` y `npm run lint`.
 
-Los paquetes no declaran un script de tests automatizados. Las integraciones Git de Cloudflare Pages y Railway despliegan `main`; GitHub Actions valida el código y no duplica CD. Este cierre se entrega en `chore/deployment-closeout`, sin PR ni merge automático.
+El frontend incorpora `npm run test:contracts` para ejecutar pruebas aisladas de contratos mediante el test runner de Node. Es un comando manual: el workflow CI existente no lo ejecuta todavía. Backend no declara un script de tests. Las integraciones Git de Cloudflare Pages y Railway despliegan `main`; GitHub Actions valida el código y no duplica CD. Este cierre se entrega en `chore/deployment-closeout`, sin PR ni merge automático.
 
 ## Operación y verificación
 

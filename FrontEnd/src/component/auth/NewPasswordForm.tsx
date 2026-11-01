@@ -1,126 +1,29 @@
-import type { ConfirmToken, NewPasswordForm } from "../../types";
-import { useNavigate } from "react-router-dom";
+﻿import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
-import ErrorMessage from "../ErrorMessage";
 import { useMutation } from "@tanstack/react-query";
-import { toast } from "react-toastify";
 import { updatePasswordWithToken } from "../../api/AuthApi";
+import type { NewPasswordForm as NewPasswordFormData } from "../../types";
+import { FormField, FormNotice, SubmitButton } from "../../design-system/forms";
 
-type NewPasswordFormProps = {
-  token: ConfirmToken["token"];
-};
-
-export default function NewPasswordForm({ token }: NewPasswordFormProps) {
+type Props = { token: string };
+export default function NewPasswordForm({ token }: Props) {
   const navigate = useNavigate();
-  const initialValues: NewPasswordForm = {
-    password: "",
-    password_confirmation: "",
-  };
-  const {
-    register,
-    handleSubmit,
-    watch,
-    reset,
-    formState: { errors },
-  } = useForm({ defaultValues: initialValues });
-
-  const { mutate } = useMutation({
-    mutationFn: updatePasswordWithToken,
-    onError: (error) => {
-      toast.error(error.message);
-    },
-    onSuccess: (data) => {
-      toast.success(data);
-      reset();
-      navigate("/auth/login");
-    },
-  });
-
-  const handleNewPassword = (formData: NewPasswordForm) => {
-    const data = {
-      formData,
-      token,
-    };
-
-    mutate(data);
-  };
-
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<NewPasswordFormData>({ defaultValues: { password: "", password_confirmation: "" } });
   const password = watch("password");
-
+  const mutation = useMutation({ mutationFn: updatePasswordWithToken, onSuccess: (data) => navigate("/auth/login", { replace: true, state: { notice: data || "Contraseña actualizada. Inicia sesión con tu nueva contraseña." } }) });
   return (
     <>
-      <form
-        onSubmit={handleSubmit(handleNewPassword)}
-        className="space-y-8 p-10 rounded-2xl bg-white mt-10 shadow-lg"
-        noValidate
-      >
-        {/* Password */}
-        <div className="flex flex-col gap-3">
-          <label className="text-sm font-semibold text-gray-700">Nueva contraseña</label>
-
-          <input
-            type="password"
-            placeholder="Mínimo 8 caracteres"
-            className="
-            w-full rounded-xl border border-gray-200
-            px-4 py-3 text-gray-800
-            focus:outline-none focus:ring-2
-            focus:ring-emerald-500/40
-            focus:border-emerald-500
-            transition
-          "
-            {...register("password", {
-              required: "El Password es obligatorio",
-              minLength: {
-                value: 8,
-                message: "Debe tener mínimo 8 caracteres",
-              },
-            })}
-          />
-
-          {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
-        </div>
-
-        {/* Confirm Password */}
-        <div className="flex flex-col gap-3">
-          <label className="text-sm font-semibold text-gray-700">Confirmar contraseña</label>
-
-          <input
-            type="password"
-            placeholder="Repite tu contraseña"
-            className="
-            w-full rounded-xl border border-gray-200
-            px-4 py-3 text-gray-800
-            focus:outline-none focus:ring-2
-            focus:ring-emerald-500/40
-            focus:border-emerald-500
-            transition
-          "
-            {...register("password_confirmation", {
-              required: "Debes repetir el Password",
-              validate: (value) => value === password || "Los Passwords no coinciden",
-            })}
-          />
-
-          {errors.password_confirmation && (
-            <ErrorMessage>{errors.password_confirmation.message}</ErrorMessage>
-          )}
-        </div>
-
-        {/* Submit */}
-        <button
-          type="submit"
-          className="
-          w-full py-3 rounded-xl
-          bg-gradient-to-r from-emerald-500 to-sky-500
-          hover:from-emerald-600 hover:to-sky-600
-          text-white font-bold text-lg
-          shadow-md transition
-        "
-        >
-          Establecer contraseña
-        </button>
+      <form className="ra-form" onSubmit={handleSubmit((formData) => { if (!mutation.isPending) mutation.mutate({ formData, token }); })} noValidate>
+        {mutation.isError && <FormNotice tone="error">{mutation.error.message}</FormNotice>}
+        <FormField id="new-password" label="Nueva contraseña" hint="Usa al menos 8 caracteres." error={errors.password?.message}>
+          <input id="new-password" className="ra-input" type="password" autoComplete="new-password" autoFocus aria-invalid={!!errors.password} aria-describedby={`new-password-hint${errors.password ? " new-password-error" : ""}`} {...register("password", { required: "Crea una contraseña", minLength: { value: 8, message: "Usa al menos 8 caracteres" } })} />
+        </FormField>
+        <FormField id="new-confirmation" label="Repetir contraseña" error={errors.password_confirmation?.message}>
+          <input id="new-confirmation" className="ra-input" type="password" autoComplete="new-password" aria-invalid={!!errors.password_confirmation} aria-describedby={errors.password_confirmation ? "new-confirmation-error" : undefined} {...register("password_confirmation", { required: "Repite tu contraseña", validate: (value) => value === password || "Las contraseñas no coinciden" })} />
+        </FormField>
+        <SubmitButton pending={mutation.isPending} pendingLabel="Actualizando contraseña…">Establecer contraseña</SubmitButton>
       </form>
+      <nav className="ra-form-nav" aria-label="Opciones de acceso"><Link to="/auth/forgot-password">Solicitar otro código</Link><Link to="/auth/login">Volver a iniciar sesión</Link></nav>
     </>
   );
 }

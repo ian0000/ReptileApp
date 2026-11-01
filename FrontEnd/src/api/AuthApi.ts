@@ -1,4 +1,4 @@
-import { isAxiosError } from "axios";
+import { ApiError, normalizeApiError } from "./errors";
 import api from "../lib/axios";
 import {
   userSchema,
@@ -17,9 +17,7 @@ export async function createAccount(formData: UserRegistrationForm) {
     const { data } = await api.post<string>(url, formData);
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error);
-    }
+    throw normalizeApiError(error);
   }
 }
 
@@ -29,22 +27,19 @@ export async function confirmAccount(formData: ConfirmToken) {
     const { data } = await api.post<string>(url, formData);
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error);
-    }
-    throw error;
+    throw normalizeApiError(error);
   }
 }
 
-export async function RequestConfirmationCode(formData: RequestConfirmationCodeForm) {
+export async function RequestConfirmationCode(
+  formData: RequestConfirmationCodeForm,
+) {
   try {
     const url = "/auth/request-code";
     const { data } = await api.post<string>(url, formData);
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error);
-    }
+    throw normalizeApiError(error);
   }
 }
 
@@ -53,12 +48,15 @@ export async function authenticateUser(formData: UserLoginForm) {
     const url = "/auth/login";
     const { data } = await api.post<string>(url, formData);
 
+    if (typeof data !== "string" || !data.trim()) {
+      throw new ApiError(
+        "La respuesta de inicio de sesión no es válida. Vuelve a intentarlo.",
+      );
+    }
     localStorage.setItem("AUTH_TOKEN", data);
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error);
-    }
+    throw normalizeApiError(error);
   }
 }
 
@@ -68,9 +66,7 @@ export async function forgotPassword(formData: ForgotPasswordForm) {
     const { data } = await api.post<string>(url, formData);
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error);
-    }
+    throw normalizeApiError(error);
   }
 }
 
@@ -80,9 +76,7 @@ export async function validateToken(formData: ConfirmToken) {
     const { data } = await api.post<string>(url, formData);
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error);
-    }
+    throw normalizeApiError(error);
   }
 }
 
@@ -98,9 +92,7 @@ export async function updatePasswordWithToken({
     const { data } = await api.post<string>(url, formData);
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error);
-    }
+    throw normalizeApiError(error);
   }
 }
 
@@ -111,11 +103,11 @@ export async function getUser() {
     if (response.success) {
       return response.data;
     }
-    return data;
+    throw new ApiError(
+      "La respuesta de tu cuenta no es válida. Vuelve a intentarlo.",
+    );
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error);
-    }
+    throw normalizeApiError(error);
   }
 }
 
@@ -125,8 +117,6 @@ export async function checkPassword(formData: CheckPasswordForm) {
     const { data } = await api.post<string>(url, formData);
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error);
-    }
+    throw normalizeApiError(error);
   }
 }

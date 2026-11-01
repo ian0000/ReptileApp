@@ -14,7 +14,8 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test:contracts": "node --import ./scripts/register-contract-tests.mjs --test ./tests/api-contracts.test.mjs"
   },
   "dependencies": {
     "@chakra-ui/react": "^3.32.0",

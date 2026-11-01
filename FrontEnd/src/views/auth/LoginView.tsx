@@ -1,117 +1,105 @@
 import { useForm } from "react-hook-form";
-import ErrorMessage from "../../component/ErrorMessage";
-import type { UserLoginForm } from "../../types";
-import { Link, useNavigate } from "react-router-dom";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "react-toastify";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { authenticateUser } from "../../api/AuthApi";
+import { FormField, FormNotice, SubmitButton } from "../../design-system/forms";
+import type { UserLoginForm } from "../../types";
 
 export default function LoginView() {
-  const initialValues: UserLoginForm = {
-    email: "",
-    password: "",
-  };
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const location = useLocation();
+  const state = location.state as { notice?: string; email?: string } | null;
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm({ defaultValues: initialValues });
-
-  const navigate = useNavigate();
-
-  const { mutate } = useMutation({
-    mutationFn: authenticateUser,
-    onError: (error) => {
-      toast.error(error.message);
-    },
-    onSuccess: () => {
-      toast.success("Iniciando sesion...");
-      navigate("/");
+  } = useForm<UserLoginForm>({
+    defaultValues: {
+      email: typeof state?.email === "string" ? state.email : "",
+      password: "",
     },
   });
-  const handleLogin = (formData: UserLoginForm) => {
-    mutate(formData);
-  };
-
+  const mutation = useMutation({
+    mutationFn: authenticateUser,
+    onSuccess: async () => {
+      await queryClient.cancelQueries();
+      queryClient.clear();
+      navigate("/", { replace: true });
+    },
+  });
   return (
     <>
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-extrabold text-gray-900">Iniciar sesión</h1>
-        <p className="text-gray-500 mt-2">Accede a tu cuenta para continuar</p>
-      </div>
-
-      {/* Form */}
-      <form onSubmit={handleSubmit(handleLogin)} className="space-y-6" noValidate>
-        {/* Email */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Email</label>
+      <title>Iniciar sesión — ReptileApp</title>
+      <h1>Iniciar sesión</h1>
+      <p className="auth-intro">
+        Vuelve a los ejemplares y registros de tu cuenta.
+      </p>
+      <form
+        className="ra-form"
+        onSubmit={handleSubmit((data) => {
+          if (!mutation.isPending) mutation.mutate(data);
+        })}
+        noValidate
+      >
+        {typeof state?.notice === "string" && (
+          <FormNotice tone="success">{state.notice}</FormNotice>
+        )}
+        {mutation.isError && (
+          <FormNotice tone="error">{mutation.error.message}</FormNotice>
+        )}
+        <FormField
+          id="login-email"
+          label="Correo electrónico"
+          error={errors.email?.message}
+        >
           <input
-            id="email"
+            id="login-email"
+            className="ra-input"
             type="email"
-            placeholder="tu@email.com"
-            className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
+            autoComplete="username"
+            inputMode="email"
+            aria-invalid={!!errors.email}
+            aria-describedby={errors.email ? "login-email-error" : undefined}
             {...register("email", {
-              required: "El email es obligatorio",
+              required: "Ingresa tu correo electrónico",
               pattern: {
                 value: /\S+@\S+\.\S+/,
-                message: "E-mail no válido",
+                message: "Ingresa un correo válido",
               },
             })}
           />
-          {errors.email && <ErrorMessage>{errors.email.message}</ErrorMessage>}
-        </div>
-
-        {/* Password */}
-        <div>
-          <label className="block text-sm font-semibold text-gray-700 mb-1">Contraseña</label>
+        </FormField>
+        <FormField
+          id="login-password"
+          label="Contraseña"
+          error={errors.password?.message}
+        >
           <input
+            id="login-password"
+            className="ra-input"
             type="password"
-            placeholder="••••••••"
-            className="w-full rounded-xl border border-gray-200
-                     px-4 py-2.5 text-gray-800
-                     focus:outline-none focus:ring-2
-                     focus:ring-emerald-500/30
-                     focus:border-emerald-500
-                     transition"
-            {...register("password", {
-              required: "El password es obligatorio",
-            })}
+            autoComplete="current-password"
+            aria-invalid={!!errors.password}
+            aria-describedby={
+              errors.password ? "login-password-error" : undefined
+            }
+            {...register("password", { required: "Ingresa tu contraseña" })}
           />
-          {errors.password && <ErrorMessage>{errors.password.message}</ErrorMessage>}
-        </div>
-
-        {/* Submit */}
-        <button
-          type="submit"
-          className="w-full mt-4 px-6 py-3 rounded-xl
-                   bg-gradient-to-r from-emerald-500 to-sky-500
-                   hover:from-emerald-600 hover:to-sky-600
-                   text-white font-bold text-lg
-                   shadow-lg transition-all
-                   transform hover:-translate-y-0.5"
+        </FormField>
+        <Link to="/auth/forgot-password">¿Olvidaste tu contraseña?</Link>
+        <SubmitButton
+          pending={mutation.isPending}
+          pendingLabel="Iniciando sesión…"
         >
           Iniciar sesión
-        </button>
+        </SubmitButton>
       </form>
-
-      {/* Links */}
-      <nav className="mt-8 flex flex-col gap-3 text-sm text-center">
-        <Link to="/auth/register" className="text-gray-500 hover:text-emerald-600 transition">
-          ¿No tienes una cuenta? <span className="font-semibold">Crear cuenta</span>
-        </Link>
-
-        <Link
-          to="/auth/forgot-password"
-          className="text-gray-500 hover:text-emerald-600 transition"
-        >
-          ¿Olvidaste tu contraseña?
-        </Link>
+      <nav className="ra-form-nav" aria-label="Opciones de acceso">
+        <p>
+          ¿Aún no tienes cuenta? <Link to="/auth/register">Crear cuenta</Link>
+        </p>
+        <Link to="/auth/confirm-account">Confirmar mi cuenta</Link>
       </nav>
     </>
   );

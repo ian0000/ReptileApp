@@ -1,0 +1,146 @@
+@font-face {
+  font-family: "Jost";
+  src: url("/fonts/jost-variable.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+.reptile-design {
+  --ra-petrol: #153d32;
+  --ra-lime: #d7f15b;
+  --ra-coral: #ee8b6c;
+  --ra-cobalt: #3658bd;
+  --ra-violet: #7750ad;
+  --ra-mineral: #f2f5ed;
+  --ra-surface: #ffffff;
+  --ra-ink: #153d32;
+  --ra-muted: #52665c;
+  --ra-border: #ccd7ca;
+  --ra-danger: #a63232;
+  --ra-control-border: #7e9487;
+  --ra-error-surface: #fff2ef;
+  --ra-success-surface: #e9f2df;
+  --ra-overlay: #08251acc;
+  --ra-lime-hover: #e3f791;
+  --ra-primary-pressed: #c7e541;
+  --ra-font-display: "Jost", system-ui, sans-serif;
+  --ra-font-body: "Jost", system-ui, sans-serif;
+  --ra-space-1: 0.25rem;
+  --ra-space-2: 0.5rem;
+  --ra-space-3: 0.75rem;
+  --ra-space-4: 1rem;
+  --ra-space-5: 1.5rem;
+  --ra-space-6: 2rem;
+  --ra-space-7: 3rem;
+  --ra-space-8: 4rem;
+  --ra-space-9: 6rem;
+  --ra-radius-control: 0.75rem;
+  --ra-radius-panel: 1.5rem;
+  --ra-radius-pill: 999px;
+  --ra-shadow-raised: 0 1rem 2.5rem #153d3214;
+  --ra-duration-fast: 120ms;
+  --ra-duration-feedback: 180ms;
+  --ra-duration-panel: 240ms;
+  --ra-ease-feedback: cubic-bezier(0.23, 1, 0.32, 1);
+  color: var(--ra-ink);
+  background: var(--ra-mineral);
+  font-family: var(--ra-font-body);
+  line-height: 1.6;
+  color-scheme: light;
+}
+
+.reptile-design *,
+.reptile-design *::before,
+.reptile-design *::after {
+  box-sizing: border-box;
+}
+
+.reptile-design ::selection {
+  color: var(--ra-petrol);
+  background: var(--ra-lime);
+}
+
+.reptile-design :focus-visible {
+  outline: 2px solid var(--ra-surface);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 5px var(--ra-petrol);
+}
+
+.reptile-design .ra-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ra-space-3);
+  min-height: 3rem;
+  padding: var(--ra-space-3) var(--ra-space-5);
+  border: 1px solid transparent;
+  border-radius: var(--ra-radius-control);
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.4;
+  text-align: center;
+  text-decoration: none;
+}
+
+.reptile-design .ra-action--primary {
+  color: var(--ra-petrol);
+  background: var(--ra-lime);
+}
+
+.reptile-design .ra-action--secondary {
+  color: inherit;
+  border-color: currentColor;
+  background: transparent;
+}
+
+.reptile-design .ra-action--primary:active {
+  background: var(--ra-primary-pressed);
+}
+
+.reptile-design .ra-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ra-space-3);
+  color: inherit;
+  font-family: var(--ra-font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.reptile-design .ra-brand img {
+  display: block;
+  flex-shrink: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.reptile-design .ra-section-heading {
+  margin: 0;
+  font-family: var(--ra-font-display);
+  font-size: clamp(2rem, 4.5vw, 3.5rem);
+  font-weight: 500;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .reptile-design .ra-action--primary:hover {
+    background: var(--ra-lime-hover);
+  }
+
+  .reptile-design .ra-action--secondary:hover {
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .reptile-design .ra-action {
+    transition: background-color var(--ra-duration-feedback) var(--ra-ease-feedback),
+      border-color var(--ra-duration-feedback) var(--ra-ease-feedback);
+  }
+}

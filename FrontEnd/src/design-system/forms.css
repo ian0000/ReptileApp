@@ -1,0 +1,246 @@
+.reptile-design .ra-form {
+  display: grid;
+  gap: var(--ra-space-5);
+}
+
+.reptile-design .ra-field {
+  display: grid;
+  gap: var(--ra-space-2);
+  min-width: 0;
+}
+
+.reptile-design .ra-field > label {
+  font-weight: 600;
+  color: var(--ra-ink);
+}
+
+.reptile-design .ra-field-hint,
+.reptile-design .ra-field-error {
+  margin: 0;
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}
+
+.reptile-design .ra-field-hint {
+  color: var(--ra-muted);
+}
+
+.reptile-design .ra-field-error {
+  color: var(--ra-danger);
+}
+
+.reptile-design .ra-input {
+  width: 100%;
+  min-width: 0;
+  min-height: 3rem;
+  padding: var(--ra-space-3) var(--ra-space-4);
+  border: 1px solid var(--ra-control-border);
+  border-radius: var(--ra-radius-control);
+  color: var(--ra-ink);
+  background: var(--ra-surface);
+  font: inherit;
+  line-height: 1.4;
+}
+
+.reptile-design .ra-input::placeholder {
+  color: var(--ra-muted);
+  opacity: 1;
+}
+
+.reptile-design textarea.ra-input {
+  min-height: 7rem;
+  resize: vertical;
+}
+
+.reptile-design .ra-input[aria-invalid="true"] {
+  border-color: var(--ra-danger);
+  border-width: 2px;
+}
+
+.reptile-design .ra-input:disabled {
+  background: var(--ra-mineral);
+  color: var(--ra-muted);
+  cursor: not-allowed;
+}
+
+.reptile-design .ra-submit,
+.reptile-design .ra-button {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--ra-space-2);
+  min-height: 3rem;
+  padding: var(--ra-space-3) var(--ra-space-5);
+  border: 1px solid transparent;
+  border-radius: var(--ra-radius-control);
+  color: var(--ra-petrol);
+  background: var(--ra-lime);
+  font: inherit;
+  font-weight: 600;
+  line-height: 1.4;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.reptile-design .ra-button--secondary {
+  color: var(--ra-ink);
+  background: var(--ra-surface);
+  border-color: var(--ra-control-border);
+}
+
+.reptile-design .ra-button--danger {
+  color: var(--ra-surface);
+  background: var(--ra-danger);
+}
+
+.reptile-design .ra-submit:disabled,
+.reptile-design .ra-button:disabled {
+  color: var(--ra-muted);
+  background: var(--ra-border);
+  cursor: not-allowed;
+}
+
+.reptile-design .ra-notice {
+  padding: var(--ra-space-4);
+  border: 1px solid currentColor;
+  border-radius: var(--ra-radius-control);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.reptile-design .ra-notice--error {
+  color: var(--ra-danger);
+  background: var(--ra-error-surface);
+}
+
+.reptile-design .ra-notice--success {
+  color: var(--ra-petrol);
+  background: var(--ra-success-surface);
+}
+
+.reptile-design .ra-form-nav {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ra-space-3) var(--ra-space-5);
+}
+
+.reptile-design .ra-form-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  color: var(--ra-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+.reptile-design.ra-dialog-root {
+  position: relative;
+  z-index: 70;
+  background: transparent;
+}
+
+.reptile-design .ra-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--ra-overlay);
+}
+
+.reptile-design .ra-dialog-position {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: var(--ra-space-4);
+}
+
+.reptile-design .ra-dialog-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 36rem);
+  max-height: calc(100dvh - 2rem);
+  min-height: 0;
+  border-radius: var(--ra-radius-panel);
+  background: var(--ra-surface);
+  box-shadow: var(--ra-shadow-raised);
+  overflow: hidden;
+}
+
+.reptile-design .ra-dialog-header {
+  flex: 0 0 auto;
+  padding: var(--ra-space-5);
+  background: var(--ra-mineral);
+}
+
+.reptile-design .ra-dialog-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ra-space-4);
+}
+
+.reptile-design .ra-dialog-title {
+  margin: 0;
+  font-family: var(--ra-font-display);
+  font-weight: 500;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  line-height: 1.2;
+}
+
+.reptile-design .ra-dialog-description {
+  margin: var(--ra-space-2) 0 0;
+  color: var(--ra-muted);
+}
+
+.reptile-design .ra-dialog-close {
+  min-height: 2.75rem;
+  padding: var(--ra-space-2);
+  border: 0;
+  background: transparent;
+  color: var(--ra-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+}
+
+.reptile-design .ra-dialog-body {
+  padding: var(--ra-space-5);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+@media (max-width: 35rem) {
+  .reptile-design .ra-dialog-position {
+    padding: 0;
+  }
+
+  .reptile-design .ra-dialog-panel {
+    width: 100%;
+    max-height: 100dvh;
+    border-radius: 0;
+  }
+
+  .reptile-design .ra-dialog-body {
+    padding-bottom: max(var(--ra-space-5), env(safe-area-inset-bottom));
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .reptile-design .ra-submit:not(:disabled):hover,
+  .reptile-design
+    .ra-button:not(:disabled):not(.ra-button--danger):not(
+      .ra-button--secondary
+    ):hover {
+    background: var(--ra-lime-hover);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .reptile-design .ra-submit,
+  .reptile-design .ra-button {
+    transition: background-color var(--ra-duration-feedback)
+      var(--ra-ease-feedback);
+  }
+}

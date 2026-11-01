@@ -1,18 +1,15 @@
-import type { NoteFormData } from "../../types";
-import { useCreateNote } from "../../hooks/useCreateNote";
-import type { NoteId, ReptilId } from "../../api/ids";
+﻿import { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import NoteForm from "./NoteForm";
+import type { NoteId, ReptilId } from "../../api/ids";
+import type { NoteFormData } from "../../types";
 import { useNote } from "../../hooks/useNote";
+import { useCreateNote } from "../../hooks/useCreateNote";
 import { useUpdateNote } from "../../hooks/useUpdateNote";
-import { useEffect } from "react";
-
-type NoteFormModalProps = {
-  reptilId: ReptilId;
-  noteId?: NoteId; // opcional → create vs edit
-  onClose: () => void;
-};
-
+import Dialog from "../../design-system/Dialog";
+import { FormNotice, SubmitButton } from "../../design-system/forms";
+import { recordError } from "../note/recordError";
+import NoteForm from "./NoteForm";
+type Props = { reptilId: ReptilId; noteId?: NoteId; onClose: () => void };
 const initialValues: NoteFormData = {
   name: "",
   description: "",
@@ -22,105 +19,87 @@ const initialValues: NoteFormData = {
   humidity: undefined,
   temp: undefined,
 };
-
-export default function NoteFormModal({ reptilId, noteId, onClose }: NoteFormModalProps) {
+export default function NoteFormModal({ reptilId, noteId, onClose }: Props) {
   const isEdit = Boolean(noteId);
-  const { data: note, isLoading } = useNote(reptilId, noteId, {
-    enabled: isEdit,
-  });
-
+  const query = useNote(reptilId, noteId, { enabled: isEdit });
   const createMutation = useCreateNote(reptilId, onClose);
   const updateMutation = useUpdateNote(reptilId, noteId!, onClose);
-
+  const mutation = isEdit ? updateMutation : createMutation;
   const {
     register,
     handleSubmit,
     reset,
-    formState: { errors },
-  } = useForm<NoteFormData>({
-    defaultValues: initialValues,
-  });
-
+    formState: { errors, isDirty },
+  } = useForm<NoteFormData>({ defaultValues: initialValues });
   useEffect(() => {
-    if (!noteId) {
-      reset(initialValues);
-      return;
-    }
-
-    if (note) {
+    if (!isEdit) return;
+    if (query.data && !isDirty)
       reset({
-        name: note.name,
-        description: note.description,
-        type: note.type,
-        tags: note.tags,
-        weight: note.weight,
-        temp: note.temp,
-        humidity: note.humidity,
+        name: query.data.name,
+        description: query.data.description,
+        type: query.data.type,
+        tags: query.data.tags,
+        weight: query.data.weight,
+        humidity: query.data.humidity,
+        temp: query.data.temp,
       });
-    }
-  }, [noteId, note, reset]);
-
+  }, [isEdit, query.data, isDirty, reset]);
   const handleForm = (formData: NoteFormData) => {
-    if (isEdit) {
-      updateMutation.mutate(formData);
-    } else {
-      createMutation.mutate(formData);
-    }
+    if (!mutation.isPending) mutation.mutate(formData);
   };
   return (
-    <div
-      className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm
-                  flex items-center justify-center px-4"
+    <Dialog
+      open
+      onClose={() => {
+        if (!mutation.isPending) onClose();
+      }}
+      title={isEdit ? "Editar nota" : "Registrar nota"}
+      description="Los cambios se guardarán en el historial de este ejemplar."
     >
-      <div
-        className="bg-white rounded-2xl w-full max-w-md
-                    shadow-xl overflow-hidden"
-      >
-        {/* Header */}
-        <div className="px-6 py-4 border-b">
-          <h2 className="text-xl font-extrabold text-gray-900">
-            {isEdit ? "Editar Nota" : "Nueva Nota"}
-          </h2>
-          <p className="text-sm text-gray-500 mt-1">
-            {isEdit ? "Actualiza la información de la nota" : "Registra una nueva observación"}
-          </p>
-        </div>
-
-        {/* Body */}
-        <div className="p-6">
-          {isEdit && isLoading ? (
-            <p className="text-center py-10 text-gray-500">Cargando nota…</p>
-          ) : (
-            <form onSubmit={handleSubmit(handleForm)}>
-              <NoteForm register={register} errors={errors} />
-
-              {/* Footer */}
-              <div className="flex justify-end gap-3 mt-6">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  className="px-4 py-2 rounded-lg
-                           text-gray-600 font-semibold
-                           hover:bg-gray-100 transition"
-                >
-                  Cancelar
-                </button>
-
-                <button
-                  type="submit"
-                  className="px-5 py-2.5 rounded-xl
-                           bg-gradient-to-r from-emerald-500 to-sky-500
-                           hover:from-emerald-600 hover:to-sky-600
-                           text-white font-bold
-                           shadow-md transition"
-                >
-                  Guardar
-                </button>
-              </div>
-            </form>
+      {isEdit && query.isLoading ? (
+        <p role="status">Cargando registro…</p>
+      ) : isEdit && query.isError ? (
+        <FormNotice tone="error">
+          {recordError(query.error)}{" "}
+          <button
+            type="button"
+            className="ra-history-retry"
+            onClick={() => void query.refetch()}
+            disabled={query.isFetching}
+          >
+            Reintentar
+          </button>
+        </FormNotice>
+      ) : (
+        <form className="ra-form" onSubmit={handleSubmit(handleForm)}>
+          {mutation.isError && (
+            <FormNotice tone="error">{recordError(mutation.error)}</FormNotice>
           )}
-        </div>
-      </div>
-    </div>
+          <fieldset
+            disabled={mutation.isPending}
+            className="ra-history-fieldset"
+          >
+            <legend className="sr-only">Datos del registro</legend>
+            <NoteForm register={register} errors={errors} />
+          </fieldset>
+          <div className="ra-record-dialog-actions">
+            <button
+              className="ra-record-cancel"
+              type="button"
+              onClick={onClose}
+              disabled={mutation.isPending}
+            >
+              Cancelar
+            </button>
+            <SubmitButton
+              pending={mutation.isPending}
+              pendingLabel="Guardando…"
+            >
+              Guardar nota
+            </SubmitButton>
+          </div>
+        </form>
+      )}
+    </Dialog>
   );
 }

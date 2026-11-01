@@ -1,4 +1,4 @@
-import { isAxiosError } from "axios";
+import { normalizeApiError } from "./errors";
 import api from "../lib/axios";
 import { noteFormSchema, type NoteFormData } from "../types";
 import { schemas } from "./client";
@@ -12,10 +12,7 @@ export async function createNote(reptilId: ReptilId, formData: NoteFormData) {
 
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error || "Error creating note");
-    }
-    throw error;
+    throw normalizeApiError(error);
   }
 }
 export type NoteListItem = Pick<
@@ -50,22 +47,19 @@ export async function getNotes(reptilId: ReptilId): Promise<NoteListItem[]> {
       .array()
       .parse(data);
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error || "Error fetching notes");
-    }
-    throw error;
+    throw normalizeApiError(error);
   }
 }
 
-export async function getNoteById(reptilId: ReptilId, noteId: NoteId): Promise<Note> {
+export async function getNoteById(
+  reptilId: ReptilId,
+  noteId: NoteId,
+): Promise<Note> {
   try {
     const response = await api.get(`/reptiles/${reptilId}/notes/${noteId}`);
     return response.data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error || "Error fetching note");
-    }
-    throw error;
+    throw normalizeApiError(error);
   }
 }
 type UpdateNoteArgs = {
@@ -73,17 +67,21 @@ type UpdateNoteArgs = {
   formData: NoteFormData;
   noteId: NoteId;
 };
-export async function updateNoteData({ reptilId, noteId, formData }: UpdateNoteArgs) {
+export async function updateNoteData({
+  reptilId,
+  noteId,
+  formData,
+}: UpdateNoteArgs) {
   try {
     const payload = noteFormSchema.parse(formData);
 
-    const { data } = await api.patch(`/reptiles/${reptilId}/notes/${noteId}`, payload);
+    const { data } = await api.patch(
+      `/reptiles/${reptilId}/notes/${noteId}`,
+      payload,
+    );
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error || "Error updating note");
-    }
-    throw error;
+    throw normalizeApiError(error);
   }
 }
 export async function deleteNoteById(reptilId: ReptilId, noteId: NoteId) {
@@ -91,9 +89,6 @@ export async function deleteNoteById(reptilId: ReptilId, noteId: NoteId) {
     const { data } = await api.delete(`/reptiles/${reptilId}/notes/${noteId}`);
     return data;
   } catch (error) {
-    if (isAxiosError(error) && error.response) {
-      throw new Error(error.response.data.error || "Error deleting note");
-    }
-    throw error;
+    throw normalizeApiError(error);
   }
 }
